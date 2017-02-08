@@ -60,6 +60,28 @@ COST_1 = Cost(1, INF)
 COST_1_1 = Cost(1, COST_1)
 
 
+class Type(): 
+	cRed = 0
+	def __init__(self): self.tRes = self
+class FType(Type):
+	def __init__(self, cApp, tRet): 
+		self.tRes, self.cApp, self.tRet = self, cApp, tRet
+class EType(Type):
+	def __init__(self, cRed, tRes): self.cRed, self.tRes = cRed, tRes
+VTYPE = Type()
+
+print VTYPE.cRed, VTYPE.tRes
+ft = FType(10, VTYPE)
+print ft.cRed, ft.tRes, ft.cApp, ft.tRet
+et = EType(100, ft)
+print et.cRed, et.tRes, et.tRes.cApp
+
+# class Type(namedtuple('Type', ['cRed', 'tRes'])): pass
+# class FType(namedtuple('FType', ['cRed', 'tRes', 'cApp', 'tRet'])): pass
+
+
+
+
 CBASE = {}
 CBASE[Symbol("+")] = COST_1_1
 CBASE[Symbol("-")] = COST_1_1

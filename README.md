@@ -34,4 +34,17 @@
 
 
 
+value: cost 0, reduce to self
+expr: cost ?, reduce to ?
+func: cost 0, reduce to self, appCost ?, returns ?
+
+
+
+
+
+
+
+
+
+
 
