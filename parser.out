@@ -1,0 +1,249 @@
+Created by PLY version 3.8 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> term
+Rule 2     term -> SYM
+Rule 3     term -> NUM
+Rule 4     term -> STRING
+Rule 5     term -> CONST
+Rule 6     term -> LPAREN list RPAREN
+Rule 7     term -> LSQUARE list RSQUARE
+Rule 8     list -> term list
+Rule 9     list -> term
+
+Terminals, with rules where they appear
+
+CONST                : 5
+LPAREN               : 6
+LSQUARE              : 7
+NUM                  : 3
+RPAREN               : 6
+RSQUARE              : 7
+STRING               : 4
+SYM                  : 2
+error                : 
+
+Nonterminals, with rules where they appear
+
+list                 : 6 7 8
+statement            : 0
+term                 : 1 8 9
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . term
+    (2) term -> . SYM
+    (3) term -> . NUM
+    (4) term -> . STRING
+    (5) term -> . CONST
+    (6) term -> . LPAREN list RPAREN
+    (7) term -> . LSQUARE list RSQUARE
+
+    SYM             shift and go to state 5
+    NUM             shift and go to state 6
+    STRING          shift and go to state 4
+    CONST           shift and go to state 3
+    LPAREN          shift and go to state 8
+    LSQUARE         shift and go to state 1
+
+    term                           shift and go to state 2
+    statement                      shift and go to state 7
+
+state 1
+
+    (7) term -> LSQUARE . list RSQUARE
+    (8) list -> . term list
+    (9) list -> . term
+    (2) term -> . SYM
+    (3) term -> . NUM
+    (4) term -> . STRING
+    (5) term -> . CONST
+    (6) term -> . LPAREN list RPAREN
+    (7) term -> . LSQUARE list RSQUARE
+
+    SYM             shift and go to state 5
+    NUM             shift and go to state 6
+    STRING          shift and go to state 4
+    CONST           shift and go to state 3
+    LPAREN          shift and go to state 8
+    LSQUARE         shift and go to state 1
+
+    term                           shift and go to state 9
+    list                           shift and go to state 10
+
+state 2
+
+    (1) statement -> term .
+
+    $end            reduce using rule 1 (statement -> term .)
+
+
+state 3
+
+    (5) term -> CONST .
+
+    SYM             reduce using rule 5 (term -> CONST .)
+    NUM             reduce using rule 5 (term -> CONST .)
+    STRING          reduce using rule 5 (term -> CONST .)
+    CONST           reduce using rule 5 (term -> CONST .)
+    LPAREN          reduce using rule 5 (term -> CONST .)
+    LSQUARE         reduce using rule 5 (term -> CONST .)
+    RSQUARE         reduce using rule 5 (term -> CONST .)
+    RPAREN          reduce using rule 5 (term -> CONST .)
+    $end            reduce using rule 5 (term -> CONST .)
+
+
+state 4
+
+    (4) term -> STRING .
+
+    SYM             reduce using rule 4 (term -> STRING .)
+    NUM             reduce using rule 4 (term -> STRING .)
+    STRING          reduce using rule 4 (term -> STRING .)
+    CONST           reduce using rule 4 (term -> STRING .)
+    LPAREN          reduce using rule 4 (term -> STRING .)
+    LSQUARE         reduce using rule 4 (term -> STRING .)
+    RSQUARE         reduce using rule 4 (term -> STRING .)
+    RPAREN          reduce using rule 4 (term -> STRING .)
+    $end            reduce using rule 4 (term -> STRING .)
+
+
+state 5
+
+    (2) term -> SYM .
+
+    SYM             reduce using rule 2 (term -> SYM .)
+    NUM             reduce using rule 2 (term -> SYM .)
+    STRING          reduce using rule 2 (term -> SYM .)
+    CONST           reduce using rule 2 (term -> SYM .)
+    LPAREN          reduce using rule 2 (term -> SYM .)
+    LSQUARE         reduce using rule 2 (term -> SYM .)
+    RSQUARE         reduce using rule 2 (term -> SYM .)
+    RPAREN          reduce using rule 2 (term -> SYM .)
+    $end            reduce using rule 2 (term -> SYM .)
+
+
+state 6
+
+    (3) term -> NUM .
+
+    SYM             reduce using rule 3 (term -> NUM .)
+    NUM             reduce using rule 3 (term -> NUM .)
+    STRING          reduce using rule 3 (term -> NUM .)
+    CONST           reduce using rule 3 (term -> NUM .)
+    LPAREN          reduce using rule 3 (term -> NUM .)
+    LSQUARE         reduce using rule 3 (term -> NUM .)
+    RSQUARE         reduce using rule 3 (term -> NUM .)
+    RPAREN          reduce using rule 3 (term -> NUM .)
+    $end            reduce using rule 3 (term -> NUM .)
+
+
+state 7
+
+    (0) S' -> statement .
+
+
+
+state 8
+
+    (6) term -> LPAREN . list RPAREN
+    (8) list -> . term list
+    (9) list -> . term
+    (2) term -> . SYM
+    (3) term -> . NUM
+    (4) term -> . STRING
+    (5) term -> . CONST
+    (6) term -> . LPAREN list RPAREN
+    (7) term -> . LSQUARE list RSQUARE
+
+    SYM             shift and go to state 5
+    NUM             shift and go to state 6
+    STRING          shift and go to state 4
+    CONST           shift and go to state 3
+    LPAREN          shift and go to state 8
+    LSQUARE         shift and go to state 1
+
+    term                           shift and go to state 9
+    list                           shift and go to state 11
+
+state 9
+
+    (8) list -> term . list
+    (9) list -> term .
+    (8) list -> . term list
+    (9) list -> . term
+    (2) term -> . SYM
+    (3) term -> . NUM
+    (4) term -> . STRING
+    (5) term -> . CONST
+    (6) term -> . LPAREN list RPAREN
+    (7) term -> . LSQUARE list RSQUARE
+
+    RSQUARE         reduce using rule 9 (list -> term .)
+    RPAREN          reduce using rule 9 (list -> term .)
+    SYM             shift and go to state 5
+    NUM             shift and go to state 6
+    STRING          shift and go to state 4
+    CONST           shift and go to state 3
+    LPAREN          shift and go to state 8
+    LSQUARE         shift and go to state 1
+
+    term                           shift and go to state 9
+    list                           shift and go to state 12
+
+state 10
+
+    (7) term -> LSQUARE list . RSQUARE
+
+    RSQUARE         shift and go to state 13
+
+
+state 11
+
+    (6) term -> LPAREN list . RPAREN
+
+    RPAREN          shift and go to state 14
+
+
+state 12
+
+    (8) list -> term list .
+
+    RSQUARE         reduce using rule 8 (list -> term list .)
+    RPAREN          reduce using rule 8 (list -> term list .)
+
+
+state 13
+
+    (7) term -> LSQUARE list RSQUARE .
+
+    SYM             reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    NUM             reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    STRING          reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    CONST           reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    LPAREN          reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    LSQUARE         reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    RSQUARE         reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    RPAREN          reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+    $end            reduce using rule 7 (term -> LSQUARE list RSQUARE .)
+
+
+state 14
+
+    (6) term -> LPAREN list RPAREN .
+
+    SYM             reduce using rule 6 (term -> LPAREN list RPAREN .)
+    NUM             reduce using rule 6 (term -> LPAREN list RPAREN .)
+    STRING          reduce using rule 6 (term -> LPAREN list RPAREN .)
+    CONST           reduce using rule 6 (term -> LPAREN list RPAREN .)
+    LPAREN          reduce using rule 6 (term -> LPAREN list RPAREN .)
+    LSQUARE         reduce using rule 6 (term -> LPAREN list RPAREN .)
+    RSQUARE         reduce using rule 6 (term -> LPAREN list RPAREN .)
+    RPAREN          reduce using rule 6 (term -> LPAREN list RPAREN .)
+    $end            reduce using rule 6 (term -> LPAREN list RPAREN .)
+
