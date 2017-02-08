@@ -1,5 +1,6 @@
 
 from collections import namedtuple
+from Disp import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
@@ -14,7 +15,10 @@ class Unique():
 	def __repr__(self): return self.name
 class Closure(namedtuple('Closure', ['args', 'body', 'nv'])):
 	def __repr__(self): 
-		return "[lamb@ "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]"
+		return "[@lamb "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]"
+class Function(namedtuple('Function', ['name', 'args', 'body', 'nv'])):
+	def __repr__(self): 
+		return "[@func "+self.name+" "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]"
 class Env(object):
 	def __init__(self, d, nv): self.d, self.nv = d, nv
 	def __getitem__(self, key):
@@ -23,6 +27,8 @@ class Env(object):
 APP = Unique("@app")
 LET = Unique("@let")
 LAMB = Unique("@lamb")
+FUNC = Unique("@func")
+IF = Unique("@if")
 COST = Unique("@cost")
 
 BASE = {}
@@ -30,6 +36,7 @@ BASE[Symbol("+")] = lambda x,y: x+y
 BASE[Symbol("-")] = lambda x,y: x-y
 BASE[Symbol("*")] = lambda x,y: x*y
 BASE[Symbol("/")] = lambda x,y: x/y
+BASE[Symbol("print")] = lambda x: L(x) and x
 
 CONSTS = {
 	"@true"		: True,
@@ -38,12 +45,33 @@ CONSTS = {
 	"@app"		: APP,
 	"@let"		: LET,
 	"@lamb"		: LAMB,
+	"@func"		: FUNC,
+	"@if"		: IF,
 	"@cost"		: COST,
 }
 
 def isFn(x): return hasattr(x, '__call__')
 
 INF = float('inf')
+
+class Cost(namedtuple('Cost', ['eval', 'app'])): pass
+COST_1 = Cost(1, INF)
+COST_1_1 = Cost(1, COST_1)
+
+
+CBASE = {}
+CBASE[Symbol("+")] = COST_1_1
+CBASE[Symbol("-")] = COST_1_1
+CBASE[Symbol("*")] = COST_1_1
+CBASE[Symbol("/")] = COST_1_1
+CBASE[Symbol("print")] = COST_1
+
+
+
+
+
+
+
 
 
 

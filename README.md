@@ -2,8 +2,9 @@
 
 ### TODO ###
 
-* move this to README
-* implement minCost
-* make special forms not need @
-* make consts not need @
-* make consts print as they are parsed
+* costs for functions
+    - cost to eval expr (to function)
+    - cost to apply function / eval body (to function)
+    - cost to apply result (etc)
+    - need to use inputs to functions too
+        + need general function-cost typed

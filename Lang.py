@@ -6,7 +6,9 @@ from Disp import *
 
 def runf(file_name):
 	with open(file_name, 'r') as f: L(runs(f.read()))
-def runs(x, nv=None): return run(parse(x), nv or Env({}, BASE))
+def runs(x, nv=None): 
+	# return run(parse(x), nv or Env({}, BASE))
+	return getCost(parse(x), nv or Env({}, CBASE))
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
@@ -14,8 +16,12 @@ def run(x, nv):
 			rest = [run(r, nv) for r in rest]
 			f, args = rest[0], rest[1:]
 			if isFn(f): return f(*args)
-			nv2 = Env(dict(zip(f.args, args)), f.nv)
-			return run(f.body, nv2)
+			if isinstance(f, Closure):
+				nv2 = Env(dict(zip(f.args, args)), f.nv)
+				return run(f.body, nv2)
+			if isinstance(f, Function):
+				nv2 = Env(dict(zip(f.args, args)+[(f.name, f)]), f.nv)
+				return run(f.body, nv2)
 		if first is LET:
 			arg, val, body = rest
 			nv2 = Env({arg: run(val, nv)}, nv)
@@ -23,13 +29,27 @@ def run(x, nv):
 		if first is LAMB:
 			args, body = rest[:-1], rest[-1]
 			return Closure(args, body, nv)
-		if first is COST:
-			return minCost(rest[0], nv)
+		if first is FUNC:
+			name, args, body = rest[0], rest[1:-1], rest[-1]
+			return Function(name, args, body, nv)
+		if first is IF:
+			return run(rest[1], nv) if run(rest[0], nv) else run(rest[2], nv)
 	if isinstance(x, Symbol): return nv[x]
 	return x
 
-def minCost(x, nv):
-	return INF
+def getCost(x, nv):
+	if isinstance(x, Expr):
+		first, rest = x[0], x[1:]
+		if first is APP:
+			rest = [getCost(r, nv) for r in rest]
+			f, args = rest[0], rest[1:]
+			return Cost(sum(r.eval for r in rest)+f.app.eval, INF)
+		if first is IF:
+			maxCost = max(getCost(rest[1], nv).eval, getCost(rest[2], nv).eval)
+			return Cost(1+getCost(rest[0], nv).eval+maxCost, INF)
+		return INF
+	if isinstance(x, Symbol): return nv[x]
+	return COST_1
 
 
 # def run(x, nv):
