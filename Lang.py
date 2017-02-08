@@ -7,8 +7,8 @@ from Disp import *
 def runf(file_name):
 	with open(file_name, 'r') as f: L(runs(f.read()))
 def runs(x, nv=None): 
-	# return run(parse(x), nv or Env({}, BASE))
-	return getCost(parse(x), nv or Env({}, CBASE))
+	return run(parse(x), nv or Env({}, BASE))
+	# return getCost(parse(x), nv or Env({}, CBASE))
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]

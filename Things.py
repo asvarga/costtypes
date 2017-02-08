@@ -1,6 +1,7 @@
 
 from collections import namedtuple
 from Disp import *
+import operator as op
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
@@ -32,10 +33,10 @@ IF = Unique("@if")
 COST = Unique("@cost")
 
 BASE = {}
-BASE[Symbol("+")] = lambda x,y: x+y
-BASE[Symbol("-")] = lambda x,y: x-y
-BASE[Symbol("*")] = lambda x,y: x*y
-BASE[Symbol("/")] = lambda x,y: x/y
+BASE[Symbol("+")] = op.add
+BASE[Symbol("-")] = op.sub
+BASE[Symbol("*")] = op.mul
+BASE[Symbol("/")] = op.div
 BASE[Symbol("print")] = lambda x: L(x) and x
 
 CONSTS = {
