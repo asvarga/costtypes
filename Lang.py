@@ -23,8 +23,13 @@ def run(x, nv):
 		if first is LAMB:
 			args, body = rest[:-1], rest[-1]
 			return Closure(args, body, nv)
+		if first is COST:
+			return minCost(rest[0], nv)
 	if isinstance(x, Symbol): return nv[x]
 	return x
+
+def minCost(x, nv):
+	return INF
 
 
 # def run(x, nv):

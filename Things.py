@@ -23,6 +23,7 @@ class Env(object):
 APP = Unique("@app")
 LET = Unique("@let")
 LAMB = Unique("@lamb")
+COST = Unique("@cost")
 
 BASE = {}
 BASE[Symbol("+")] = lambda x,y: x+y
@@ -37,11 +38,12 @@ CONSTS = {
 	"@app"		: APP,
 	"@let"		: LET,
 	"@lamb"		: LAMB,
+	"@cost"		: COST,
 }
 
 def isFn(x): return hasattr(x, '__call__')
 
-
+INF = float('inf')
 
 
 
