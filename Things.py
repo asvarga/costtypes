@@ -32,13 +32,6 @@ FUNC = Unique("@func")
 IF = Unique("@if")
 COST = Unique("@cost")
 
-BASE = {}
-BASE[Symbol("+")] = op.add
-BASE[Symbol("-")] = op.sub
-BASE[Symbol("*")] = op.mul
-BASE[Symbol("/")] = op.div
-BASE[Symbol("print")] = lambda x: L(x) and x
-
 CONSTS = {
 	"@true"		: True,
 	"@false"	: False,
@@ -56,8 +49,8 @@ def isFn(x): return hasattr(x, '__call__')
 INF = float('inf')
 
 class Type(): 
-	cRed = 0
-	def __init__(self): self.tRes = self
+	cRed, cApp = 1, INF
+	def __init__(self): self.tRes, self.tRet = self, self
 	def __repr__(self): return "VTYPE"
 class FType(Type):
 	def __init__(self, cApp, tRet): 
@@ -75,11 +68,22 @@ OPTYPE = FType(1, VTYPE)
 # et = EType(100, ft)
 # print et.cRed, et.tRes, et.tRes.cApp
 
+BASE = {}
+BASE[Symbol("+")] = op.add
+BASE[Symbol("-")] = op.sub
+BASE[Symbol("*")] = op.mul
+BASE[Symbol("/")] = op.div
+BASE[Symbol("x")] = 3
+BASE[Symbol("y")] = 4
+BASE[Symbol("print")] = lambda x: L(x) and x
+
 CBASE = {}
 CBASE[Symbol("+")] = OPTYPE
 CBASE[Symbol("-")] = OPTYPE
 CBASE[Symbol("*")] = OPTYPE
 CBASE[Symbol("/")] = OPTYPE
+CBASE[Symbol("x")] = VTYPE
+CBASE[Symbol("y")] = VTYPE
 
 
 
