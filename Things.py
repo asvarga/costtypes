@@ -48,19 +48,44 @@ def isFn(x): return hasattr(x, '__call__')
 
 INF = float('inf')
 
-class Type(): 
-	cRed, cApp = 1, INF
-	def __init__(self): self.tRes, self.tRet = self, self
-	def __repr__(self): return "VTYPE"
-class FType(Type):
-	def __init__(self, cApp, tRet): 
-		self.tRes, self.cApp, self.tRet = self, cApp, tRet
-	def __repr__(self): return "("+str(self.cApp)+"->"+repr(self.tRet)+")"
-class EType(Type):
-	def __init__(self, cRed, tRes): self.cRed, self.tRes = cRed, tRes
-	def __repr__(self): return "("+str(self.cRed)+".."+repr(self.tRes)+")"
+# class Type(): 
+# 	cRed, cApp = 1, INF
+# 	def __init__(self): self.tRes, self.tRet = self, self
+# 	def __repr__(self): return "VTYPE"
+# class FType(Type):
+# 	def __init__(self, cApp, tRet): 
+# 		self.tRes, self.cApp, self.tRet = self, cApp, tRet
+# 	def __repr__(self): return "("+str(self.cApp)+"->"+repr(self.tRet)+")"
+# class EType(Type):
+# 	def __init__(self, cRed, tRes): self.cRed, self.tRes = cRed, tRes
+# 	def __repr__(self): return "("+str(self.cRed)+".."+repr(self.tRes)+")"
+# VTYPE = Type()
+# OPTYPE = FType(1, VTYPE)
+
+SEMI = Unique(';')
+class Type():
+	def __init__(self, cRed=None, tRed=None, cApp=None, tApp=None):
+		self.cRed = cRed or 0
+		self.tRed = tRed or self
+		self.cApp = cApp or INF
+		self.tApp = tApp or self
+	def __repr__(self):
+		L = []
+		if self.cRed or not self.tRed:
+			L.append(repr(self.cRed)+".."+("SELF" if self.tRed is self else repr(self.tRed)))
+		if self.cApp != INF or not self.tApp is self:
+			L.append(repr(self.cApp)+"->"+("SELF" if self.tApp is self else repr(self.tApp)))
+		return "("+" | ".join(L)+")"
+
 VTYPE = Type()
+def EType(cRed, tRed): return Type(cRed, tRed)
+def FType(cApp, tApp): return Type(None, None, cApp, tApp)
 OPTYPE = FType(1, VTYPE)
+
+
+def maxType(t1, t2):
+	if t1 == t2 == VTYPE: return VTYPE
+
 
 # print VTYPE.cRed, VTYPE.tRes
 # ft = FType(10, VTYPE)
