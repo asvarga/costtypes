@@ -42,6 +42,25 @@ def getType(x, nv):
 		first, rest = x[0], x[1:]
 		if first is APP:
 			rest = [getType(r, nv) for r in rest]
+			f = rest[0]
+			return cons(sum(r.car for r in rest)+f.cdr.car, f.cdr.cdr)
+		if first is LAMB:
+			args = rest[:-1]
+			nv2 = Env({arg:VTYPE for arg in args}, nv)
+			body = getType(rest[-1], nv2)
+			return cons(len(rest), body)
+		if first is IF:
+			rest = [getType(r, nv) for r in rest]
+			return tAdd(tMax(rest[1], rest[2]), rest[0].car)
+		raise Exception("unimplemented")
+	if isinstance(x, Symbol): return nv[x]
+	return VTYPE
+
+def getType2(x, nv):
+	if isinstance(x, Expr):
+		first, rest = x[0], x[1:]
+		if first is APP:
+			rest = [getType(r, nv) for r in rest]
 			fRed = rest[0].tRed
 			return EType(sum(r.cRed+1 for r in rest)+fRed.cApp, fRed.tApp)
 		if first is LAMB:
@@ -49,10 +68,9 @@ def getType(x, nv):
 			nv2 = Env({arg:VTYPE for arg in args}, nv)
 			body = getType(rest[-1], nv2)
 			return EType(len(rest), FType(len(args)+body.cRed, body.tRed))
-		# if first is IF:
-		# 	rest = [getType(r, nv) for r in rest]
-		# 	maxCost = max(rest.eval, getType(rest[2], nv).eval)
-		# 	return Cost(1+getType(rest[0], nv).eval+maxCost, INF)
+		if first is IF:
+			rest = [getType(r, nv) for r in rest]
+			return maxType(rest[1], rest[2]).add(rest[0].cRed)
 		raise Exception("unimplemented")
 	if isinstance(x, Symbol): return nv[x]	#EType(1, nv[x])
 	return VTYPE

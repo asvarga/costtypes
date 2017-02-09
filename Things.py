@@ -76,16 +76,49 @@ class Type():
 		if self.cApp != INF or not self.tApp is self:
 			L.append(repr(self.cApp)+"->"+("SELF" if self.tApp is self else repr(self.tApp)))
 		return "("+" | ".join(L)+")"
+	def add(self, x):
+		return Type(self.cRed+x, self.tRed, self.cApp, self.tApp)
 
 VTYPE = Type()
 def EType(cRed, tRed): return Type(cRed, tRed)
 def FType(cApp, tApp): return Type(None, None, cApp, tApp)
 OPTYPE = FType(1, VTYPE)
 
+# def maxType(t1, t2):
+# 	if t1 == t2 == VTYPE: return VTYPE
+# 	m_cRed = max(t1.cRed, t2.cRed)
+# 	m_tRed = maxType(t1.tRed, t2.tRed)
+# 	m_cApp = max(t1.cApp, t2.cApp)
+# 	m_tApp = maxType(t1.tApp, t2.tApp)
+# 	return Type(m_cRed, m_tRed, m_cApp, m_tApp)
 
-def maxType(t1, t2):
-	if t1 == t2 == VTYPE: return VTYPE
 
+# VTYPE = [1]
+# OPTYPE = [1, 1]
+# def tMax(t1, t2):
+# 	L = min(len(t1), len(t2))
+# 	return map(max, zip(t1, t2))+t1[L:]+t2[L:]
+# def tAdd(t, x): return [t[0]+x]+t[1:]
+
+
+class Pair():
+	def __init__(self, car, cdr): self.car, self.cdr = car, cdr
+	def __repr__(self): 
+		if self is INFPAIR: return "."
+		return "("+repr(self.car)+" "+repr(self.cdr)+")"
+INFPAIR = Pair(INF, None)
+INFPAIR.cdr = INFPAIR
+def cons(car, cdr):
+	if (car, cdr) == (INF, INFPAIR): return INFPAIR
+	return Pair(car, cdr)
+
+VTYPE = cons(1, INFPAIR)
+OPTYPE = cons(1, VTYPE)
+
+def tMax(t1, t2):
+	if t1 == INFPAIR or t2 == INFPAIR: return INFPAIR
+	return cons(max(t1.car, t2.car), tMax(t1.cdr, t2.cdr))
+def tAdd(t, x): return cons(t.car+x, t.cdr)
 
 # print VTYPE.cRed, VTYPE.tRes
 # ft = FType(10, VTYPE)

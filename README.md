@@ -31,12 +31,28 @@
         + no, because ops still need an associated cost?
 
 
+all cost types can be represented as a linked list?
+
+ETYPE: (cRed .. VTYPE)
+VTYPE: VAL | (cApp -> VTYPE)
+? same as ?
+ETYPE: (cRed .. VTYPE)
+VTYPE: VAL | (C ETYPE)
+
+? same as ?
+ETYPE: (cRed .. VTYPE)
+VTYPE: VAL | ETYPE
+? same as ?
+TYPE: VAL | (cost .. TYPE)
 
 
 
-value: cost 0, reduce to self
-expr: cost ?, reduce to ?
-func: cost 0, reduce to self, appCost ?, returns ?
+
+
+
+
+
+
 
 
 
