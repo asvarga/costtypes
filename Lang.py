@@ -7,8 +7,8 @@ from Disp import *
 def runf(file_name):
 	with open(file_name, 'r') as f: L(runs(f.read()))
 def runs(x, nv=None): 
-	return run(parse(x), nv or Env({}, BASE))
-	# return getCost(parse(x), nv or Env({}, CBASE))
+	# return run(parse(x), nv or Env({}, BASE))
+	return getType(parse(x), nv or Env({}, CBASE))
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
@@ -37,19 +37,19 @@ def run(x, nv):
 	if isinstance(x, Symbol): return nv[x]
 	return x
 
-def getCost(x, nv):
+def getType(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
 		if first is APP:
-			rest = [getCost(r, nv) for r in rest]
-			f, args = rest[0], rest[1:]
-			return Cost(sum(r.eval for r in rest)+f.app.eval, INF)
-		if first is IF:
-			maxCost = max(getCost(rest[1], nv).eval, getCost(rest[2], nv).eval)
-			return Cost(1+getCost(rest[0], nv).eval+maxCost, INF)
-		return INF
-	if isinstance(x, Symbol): return nv[x]
-	return COST_1
+			rest = [getType(r, nv) for r in rest]
+			fRes = rest[0].tRes
+			return EType(sum(r.cRed+1 for r in rest)+fRes.cApp, fRes.tRet)
+		# if first is IF:
+		# 	maxCost = max(getType(rest[1], nv).eval, getType(rest[2], nv).eval)
+		# 	return Cost(1+getType(rest[0], nv).eval+maxCost, INF)
+		raise Exception("unimplemented")
+	if isinstance(x, Symbol): return EType(1, nv[x])
+	return VTYPE
 
 
 # def run(x, nv):
