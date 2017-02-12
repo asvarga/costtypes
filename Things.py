@@ -48,59 +48,6 @@ def isFn(x): return hasattr(x, '__call__')
 
 INF = float('inf')
 
-# class Type(): 
-# 	cRed, cApp = 1, INF
-# 	def __init__(self): self.tRes, self.tRet = self, self
-# 	def __repr__(self): return "VTYPE"
-# class FType(Type):
-# 	def __init__(self, cApp, tRet): 
-# 		self.tRes, self.cApp, self.tRet = self, cApp, tRet
-# 	def __repr__(self): return "("+str(self.cApp)+"->"+repr(self.tRet)+")"
-# class EType(Type):
-# 	def __init__(self, cRed, tRes): self.cRed, self.tRes = cRed, tRes
-# 	def __repr__(self): return "("+str(self.cRed)+".."+repr(self.tRes)+")"
-# VTYPE = Type()
-# OPTYPE = FType(1, VTYPE)
-
-SEMI = Unique(';')
-class Type():
-	def __init__(self, cRed=None, tRed=None, cApp=None, tApp=None):
-		self.cRed = cRed or 0
-		self.tRed = tRed or self
-		self.cApp = cApp or INF
-		self.tApp = tApp or self
-	def __repr__(self):
-		L = []
-		if self.cRed or not self.tRed:
-			L.append(repr(self.cRed)+".."+("SELF" if self.tRed is self else repr(self.tRed)))
-		if self.cApp != INF or not self.tApp is self:
-			L.append(repr(self.cApp)+"->"+("SELF" if self.tApp is self else repr(self.tApp)))
-		return "("+" | ".join(L)+")"
-	def add(self, x):
-		return Type(self.cRed+x, self.tRed, self.cApp, self.tApp)
-
-VTYPE = Type()
-def EType(cRed, tRed): return Type(cRed, tRed)
-def FType(cApp, tApp): return Type(None, None, cApp, tApp)
-OPTYPE = FType(1, VTYPE)
-
-# def maxType(t1, t2):
-# 	if t1 == t2 == VTYPE: return VTYPE
-# 	m_cRed = max(t1.cRed, t2.cRed)
-# 	m_tRed = maxType(t1.tRed, t2.tRed)
-# 	m_cApp = max(t1.cApp, t2.cApp)
-# 	m_tApp = maxType(t1.tApp, t2.tApp)
-# 	return Type(m_cRed, m_tRed, m_cApp, m_tApp)
-
-
-# VTYPE = [1]
-# OPTYPE = [1, 1]
-# def tMax(t1, t2):
-# 	L = min(len(t1), len(t2))
-# 	return map(max, zip(t1, t2))+t1[L:]+t2[L:]
-# def tAdd(t, x): return [t[0]+x]+t[1:]
-
-
 class Pair():
 	def __init__(self, car, cdr): self.car, self.cdr = car, cdr
 	def __repr__(self): 

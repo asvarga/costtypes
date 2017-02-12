@@ -3,10 +3,9 @@
 ### TODO ###
 
 
-* getType should also modify the code
-    - return (newCode, type)
-    - insert dynamic checks
 * get exception handling to work
+* insert dynamic checks
+
 
 * !!! [@app? f a b] for when f's app-cost can't be known statically
     - first just compute eval f to f_

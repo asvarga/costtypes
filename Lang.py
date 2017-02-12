@@ -5,10 +5,12 @@ from Disp import *
 ####    ####    ####    ####    ####    ####    ####    ####    
 
 def runf(file_name):
-	with open(file_name, 'r') as f: L(runs(f.read()))
-def runs(x, nv=None): 
-	# return run(parse(x), nv or Env({}, BASE))
-	return getType(parse(x), nv or Env({}, CBASE))
+	with open(file_name, 'r') as f: runs(f.read())
+def runs(x, nv=None, tnv=None): 
+	typ, new = getType(parse(x), Env({}, CBASE))
+	L(typ)
+	L(new)
+	L(run(new, Env({}, BASE)))
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
@@ -39,27 +41,32 @@ def run(x, nv):
 
 def getType(x, nv):
 	if isinstance(x, Expr):
-		first, rest = x[0], x[1:]
+		first, rest, xType, xNew = x[0], x[1:], None, x
 		if first is APP:
-			rest = [getType(r, nv) for r in rest]
-			f = rest[0]
-			return cons(sum(r.car for r in rest)+f.cdr.car, f.cdr.cdr)
-		if first is LET:
+			types, new = zip(*[getType(r, nv) for r in rest])
+			f = types[0]
+			xType = cons(sum(r.car for r in types)+f.cdr.car, f.cdr.cdr)
+			xNew = Expr([first]+list(new))
+		elif first is LET:
 			arg, val, body = rest
-			tVal = getType(val, nv)
+			tVal, newVal = getType(val, nv)
 			nv2 = Env({arg: tRed(tVal)}, nv)
-			return tAdd(getType(body, nv2), tVal.car+1)
-		if first is LAMB or first is FUNC:
+			tBody, newBody = getType(body, nv2)
+			xType = tAdd(tBody, tVal.car+1)
+			xNew = Expr([first, arg, newVal, newBody])
+		elif first is LAMB or first is FUNC:
 			args = rest[:-1]
 			nv2 = Env({arg:VTYPE for arg in args}, nv)
-			body = getType(rest[-1], nv2)
-			return cons(len(rest), body)
-		if first is IF:
-			rest = [getType(r, nv) for r in rest]
-			return tAdd(tMax(rest[1], rest[2]), rest[0].car)
-		raise Exception("unimplemented")
-	if isinstance(x, Symbol): return nv[x]
-	return VTYPE
+			tBody, newBody = getType(rest[-1], nv2)
+			xType = cons(len(rest), tBody)
+			xNew = Expr([first]+list(args)+[newBody])
+		elif first is IF:
+			types, new = zip(*[getType(r, nv) for r in rest])
+			xType = tAdd(tMax(types[1], types[2]), types[0].car)
+			xNew = Expr([first]+list(new))
+		return xType, xNew		# modify here
+	if isinstance(x, Symbol): return nv[x], x
+	return VTYPE, x
 
 def getType2(x, nv):
 	if isinstance(x, Expr):
