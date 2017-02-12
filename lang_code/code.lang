@@ -1,8 +1,14 @@
 
-##  [@let x (+ 1 2) (* x x)]
+[@let x (+ (+ 1 2) 3) (* x x)]
+##  (* (+ (+ 1 2) 3) 
+##  	(+ (+ 1 2) 3))
+
+##  (+ 1 2)
 ##  (+ 2 (+ 3 4))
 ##  ([@lamb x y (+ (* x x) (* y y))] 3 4)
-([@func f x [@if x (* x (f (- x 1))) 1]] 5)
+
+##  ([@func f x [@if x (* x (f (- x 1))) 1]] 5)
+
 ##  [@if (+ 1 1) (print "hey") (print "hello")]
 ##  [@if (+ 1 1) 17 (+ 2 (+ 3 4))]
 
@@ -10,10 +16,16 @@
 ##  (+ (+ 3 4) 5)
 ##  [@lamb x y (+ (* x x) (* y y))]
 ##  ([@lamb x y (+ (* x x) (* y y))] 3 4)
+##  ([@lamb x y (+ (* x x) (* y y))] 3 4)
 ##  (([@lamb x [@lamb y (+ (* x x) (* y y))]] 3) 4)
 ##  (+ (* x x) (* y y))
 
-##  ([@lamb f (f (f 3))] [@lamb x (* x x)])
+## fix this too?
+##  ([@lamb f (f (f 3))] 
+##  	[@lamb x (* x x)])
+
+## the cost of this is a function of the cost of f
+##  [@lamb f (f (f 3))] 
 ##  [@let f [@lamb x (* x x)] (f (f 3))]
 
 ##  (* 3 3)

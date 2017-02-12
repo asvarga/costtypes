@@ -119,6 +119,7 @@ def tMax(t1, t2):
 	if t1 == INFPAIR or t2 == INFPAIR: return INFPAIR
 	return cons(max(t1.car, t2.car), tMax(t1.cdr, t2.cdr))
 def tAdd(t, x): return cons(t.car+x, t.cdr)
+def tRed(t): return Pair(1, t.cdr)
 
 # print VTYPE.cRed, VTYPE.tRes
 # ft = FType(10, VTYPE)

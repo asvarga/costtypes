@@ -46,8 +46,9 @@ def getType(x, nv):
 			return cons(sum(r.car for r in rest)+f.cdr.car, f.cdr.cdr)
 		if first is LET:
 			arg, val, body = rest
-			nv2 = Env({arg: getType(val, nv)}, nv)
-			return getType(body, nv2)
+			tVal = getType(val, nv)
+			nv2 = Env({arg: tRed(tVal)}, nv)
+			return tAdd(getType(body, nv2), tVal.car+1)
 		if first is LAMB or first is FUNC:
 			args = rest[:-1]
 			nv2 = Env({arg:VTYPE for arg in args}, nv)
