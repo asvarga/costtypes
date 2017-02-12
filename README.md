@@ -2,7 +2,6 @@
 
 ### TODO ###
 
-* attach types to ops too
 * get exception handling to work
 * check app?s and maybe raise excpetion at run time
 

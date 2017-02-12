@@ -28,6 +28,11 @@ class Env(object):
 	def __init__(self, d, nv): self.d, self.nv = d, nv
 	def __getitem__(self, key):
 		return self.d[key] if key in self.d else self.nv[key]
+class Op():
+	def __init__(self, op, typ, name="some_op"): 
+		self.op , self.type, self.name = op, typ, name
+	def __call__(self, *args, **kwargs): return self.op(*args, **kwargs)
+	def __repr__(self): return self.name
 
 APP = Unique("@app")
 APPQ = Unique("@app?")
@@ -80,14 +85,14 @@ def tRed(t): return Pair(1, t.cdr)
 # print et.cRed, et.tRes, et.tRes.cApp
 
 BASE = {}
-BASE[Symbol("+")] = op.add
-BASE[Symbol("-")] = op.sub
-BASE[Symbol("*")] = op.mul
-BASE[Symbol("/")] = op.div
-BASE[Symbol("sqr")] = lambda x: x*x
+BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
+BASE[Symbol("-")] = Op(op.sub, OPTYPE, "-")
+BASE[Symbol("*")] = Op(op.mul, OPTYPE, "*")
+BASE[Symbol("/")] = Op(op.div, OPTYPE, "/")
+BASE[Symbol("sqr")] = Op(lambda x: x*x, OPTYPE, "sqr")
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
-BASE[Symbol("print")] = lambda x: L(x) and x
+BASE[Symbol("print")] = Op(lambda x: L(x) and x, OPTYPE, "print")
 
 
 CBASE = {}

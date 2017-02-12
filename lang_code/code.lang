@@ -19,7 +19,9 @@
 ##  (([@lamb x [@lamb y (+ (* x x) (* y y))]] 3) 4)
 ##  (+ (* x x) (* y y))
 
-([@lamb f (f (f 3))] [@lamb x (* x x)])
+##  ([@lamb f (f (f 3))] [@lamb x (* x x)])
+([@lamb f (f (f 3))] sqr)
+
 ## the cost of this is a function of the cost of f
 ##  [@lamb f (f (f 3))] 
 ##  [@let f [@lamb x (* x x)] (f (f 3))]
