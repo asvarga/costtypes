@@ -26,6 +26,7 @@ class Env(object):
 		return self.d[key] if key in self.d else self.nv[key]
 
 APP = Unique("@app")
+APPQ = Unique("@app?")
 LET = Unique("@let")
 LAMB = Unique("@lamb")
 FUNC = Unique("@func")

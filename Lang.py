@@ -14,7 +14,7 @@ def runs(x, nv=None, tnv=None):
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
-		if first is APP:
+		if first is APP or first is APPQ:
 			rest = [run(r, nv) for r in rest]
 			f, args = rest[0], rest[1:]
 			if isFn(f): return f(*args)
@@ -46,7 +46,11 @@ def getType(x, nv):
 			types, new = zip(*[getType(r, nv) for r in rest])
 			f = types[0]
 			xType = cons(sum(r.car for r in types)+f.cdr.car, f.cdr.cdr)
-			xNew = Expr([first]+list(new))
+			if xType is INFPAIR: 
+				xNew = Expr([APPQ]+list(new))
+				xType = VTYPE
+			else:
+				xNew = Expr([APP]+list(new))
 		elif first is LET:
 			arg, val, body = rest
 			tVal, newVal = getType(val, nv)
@@ -64,7 +68,7 @@ def getType(x, nv):
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xType = tAdd(tMax(types[1], types[2]), types[0].car)
 			xNew = Expr([first]+list(new))
-		return xType, xNew		# modify here
+		return xType, xNew
 	if isinstance(x, Symbol): return nv[x], x
 	return VTYPE, x
 

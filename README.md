@@ -2,12 +2,12 @@
 
 ### TODO ###
 
-* do @lamb and @func during getType, and attach their types to them
+* attach types to lamb and func exprs
 * get exception handling to work
 * insert dynamic checks
 
 
-* !!! [@app? f a b] for when f's app-cost can't be known statically
+* !!! [app? f a b] for when f's app-cost can't be known statically
     - first just compute eval f to f_
     - then check if it has enough credit to compute a, b, and (f_ a b)
         + iff so, do it
