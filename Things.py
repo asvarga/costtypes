@@ -6,20 +6,24 @@ import operator as op
 ####    ####    ####    ####    ####    ####    ####    ####    
 
 class Expr(tuple):
+	def __init__(self, *args): 
+		self.type = None
+		tuple.__init__(self, *args)
 	def __repr__(self): 
-		if self[0] == APP: return "("+" ".join(map(repr, self[1:]))+")"
-		else: return "["+" ".join(map(repr, self))+"]"
+		end = ":"+repr(self.type) if self.type else ""
+		if self[0] == APP: return "("+" ".join(map(repr, self[1:]))+")"+end
+		else: return "["+" ".join(map(repr, self))+"]"+end
 class Symbol(str):
 	def __repr__(self): return self
 class Unique(): 
 	def __init__(self, name): self.name = name
 	def __repr__(self): return self.name
-class Closure(namedtuple('Closure', ['args', 'body', 'nv'])):
+class Closure(namedtuple('Closure', ['args', 'body', 'nv', 'type'])):
 	def __repr__(self): 
-		return "[@lamb "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]"
-class Function(namedtuple('Function', ['name', 'args', 'body', 'nv'])):
+		return "[@lamb "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]:"+repr(self.type)
+class Function(namedtuple('Function', ['name', 'args', 'body', 'nv', 'type'])):
 	def __repr__(self): 
-		return "[@func "+self.name+" "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]"
+		return "[@func "+self.name+" "+" ".join(map(repr, self.args))+" "+repr(self.body)+"]:"+repr(self.type)
 class Env(object):
 	def __init__(self, d, nv): self.d, self.nv = d, nv
 	def __getitem__(self, key):
@@ -80,15 +84,18 @@ BASE[Symbol("+")] = op.add
 BASE[Symbol("-")] = op.sub
 BASE[Symbol("*")] = op.mul
 BASE[Symbol("/")] = op.div
+BASE[Symbol("sqr")] = lambda x: x*x
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
 BASE[Symbol("print")] = lambda x: L(x) and x
+
 
 CBASE = {}
 CBASE[Symbol("+")] = OPTYPE
 CBASE[Symbol("-")] = OPTYPE
 CBASE[Symbol("*")] = OPTYPE
 CBASE[Symbol("/")] = OPTYPE
+CBASE[Symbol("sqr")] = OPTYPE
 CBASE[Symbol("x")] = VTYPE
 CBASE[Symbol("y")] = VTYPE
 

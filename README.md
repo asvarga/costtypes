@@ -2,9 +2,9 @@
 
 ### TODO ###
 
-* attach types to lamb and func exprs
+* attach types to ops too
 * get exception handling to work
-* insert dynamic checks
+* check app?s and maybe raise excpetion at run time
 
 
 * !!! [app? f a b] for when f's app-cost can't be known statically

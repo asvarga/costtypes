@@ -10,6 +10,7 @@ def runs(x, nv=None, tnv=None):
 	typ, new = getType(parse(x), Env({}, CBASE))
 	L(typ)
 	L(new)
+	L("----")
 	L(run(new, Env({}, BASE)))
 def run(x, nv):
 	if isinstance(x, Expr):
@@ -17,6 +18,8 @@ def run(x, nv):
 		if first is APP or first is APPQ:
 			rest = [run(r, nv) for r in rest]
 			f, args = rest[0], rest[1:]
+			if first is APPQ: 
+				with L("@app?"): L(f)
 			if isFn(f): return f(*args)
 			if isinstance(f, Closure):
 				nv2 = Env(dict(zip(f.args, args)), f.nv)
@@ -30,10 +33,10 @@ def run(x, nv):
 			return run(body, nv2)
 		if first is LAMB:
 			args, body = rest[:-1], rest[-1]
-			return Closure(args, body, nv)
+			return Closure(args, body, nv, x.type)
 		if first is FUNC:
 			name, args, body = rest[0], rest[1:-1], rest[-1]
-			return Function(name, args, body, nv)
+			return Function(name, args, body, nv, x.type)
 		if first is IF:
 			return run(rest[1], nv) if run(rest[0], nv) else run(rest[2], nv)
 	if isinstance(x, Symbol): return nv[x]
@@ -64,6 +67,7 @@ def getType(x, nv):
 			tBody, newBody = getType(rest[-1], nv2)
 			xType = cons(len(rest), tBody)
 			xNew = Expr([first]+list(args)+[newBody])
+			xNew.type = xType
 		elif first is IF:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xType = tAdd(tMax(types[1], types[2]), types[0].car)
