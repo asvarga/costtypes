@@ -2,7 +2,7 @@
 
 ### TODO ###
 
-
+* do @lamb and @func during getType, and attach their types to them
 * get exception handling to work
 * insert dynamic checks
 
