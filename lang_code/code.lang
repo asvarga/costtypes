@@ -3,10 +3,6 @@
 ##  (* (+ (+ 1 2) 3) 
 ##  	(+ (+ 1 2) 3))
 
-##  (+ 1 2)
-##  (+ 2 (+ 3 4))
-##  ([@lamb x y (+ (* x x) (* y y))] 3 4)
-
 ##  ([@func f x [@if x (* x (f (- x 1))) 1]] 5)
 
 ##  [@if (+ 1 1) (print "hey") (print "hello")]
@@ -20,13 +16,18 @@
 ##  (+ (* x x) (* y y))
 
 ##  ([@lamb f (f (f 3))] [@lamb x (* x x)])
-([@lamb f (f (f 3))] sqr)
+##  ([@lamb f (f (f 3))] sqr)
 
 ## the cost of this is a function of the cost of f
 ##  [@lamb f (f (f 3))] 
 ##  [@let f [@lamb x (* x x)] (f (f 3))]
 
-##  (* 3 3)
-##  (* x x)
-##  (+ (* x x) (* y y))
+[@try [@if @false 42 [@raise]] 123]
+
+
+
+
+
+
+
 

@@ -7,11 +7,12 @@ from Disp import *
 def runf(file_name):
 	with open(file_name, 'r') as f: runs(f.read())
 def runs(x, nv=None, tnv=None): 
-	typ, new = getType(parse(x), Env({}, CBASE))
-	L(typ)
-	L(new)
-	L("----")
-	L(run(new, Env({}, BASE)))
+	L(run(parse(x), nv or Env({}, BASE)))
+	# typ, new = getType(parse(x), tnv or Env({}, CBASE))
+	# L(typ)
+	# L(new)
+	# L("----")
+	# L(run(new, nv or Env({}, BASE)))
 def run(x, nv):
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
@@ -39,6 +40,12 @@ def run(x, nv):
 			return Function(name, args, body, nv, x.type)
 		if first is IF:
 			return run(rest[1], nv) if run(rest[0], nv) else run(rest[2], nv)
+		if first is TRY:
+			body, exc = rest
+			try: return run(body, nv)
+			except MyException: return run(exc, nv)
+		if first is RAISE:
+			raise MyException("the roof")
 	if isinstance(x, Symbol): return nv[x]
 	return x
 

@@ -34,12 +34,16 @@ class Op():
 	def __call__(self, *args, **kwargs): return self.op(*args, **kwargs)
 	def __repr__(self): return self.name
 
+class MyException(Exception): pass
+
 APP = Unique("@app")
 APPQ = Unique("@app?")
 LET = Unique("@let")
 LAMB = Unique("@lamb")
 FUNC = Unique("@func")
 IF = Unique("@if")
+TRY = Unique("@try")
+RAISE = Unique("@raise")
 COST = Unique("@cost")
 
 CONSTS = {
@@ -51,6 +55,8 @@ CONSTS = {
 	"@lamb"		: LAMB,
 	"@func"		: FUNC,
 	"@if"		: IF,
+	"@try"		: TRY,
+	"@raise"	: RAISE,
 	"@cost"		: COST,
 }
 

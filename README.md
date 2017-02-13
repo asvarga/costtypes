@@ -2,8 +2,7 @@
 
 ### TODO ###
 
-* get exception handling to work
-* check app?s and maybe raise excpetion at run time
+* check app?s and maybe raise exception at run time
 
 
 * !!! [app? f a b] for when f's app-cost can't be known statically
