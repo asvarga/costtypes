@@ -7,45 +7,60 @@ from Disp import *
 def runf(file_name):
 	with open(file_name, 'r') as f: runs(f.read())
 def runs(x, nv=None, tnv=None): 
-	L(run(parse(x), nv or Env({}, BASE)))
-	# typ, new = getType(parse(x), tnv or Env({}, CBASE))
-	# L(typ)
-	# L(new)
-	# L("----")
-	# L(run(new, nv or Env({}, BASE)))
-def run(x, nv):
+	# L(run(parse(x), nv or Env({}, BASE)))
+	typ, new = getType(parse(x), tnv or Env({}, CBASE))
+	L(typ)
+	L(new)
+	L("----")
+	L(run(new, nv or Env({}, BASE)))
+
+def run(x, nv, cs=None):
+	cs = cs or INFPAIR
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
 		if first is APP or first is APPQ:
-			rest = [run(r, nv) for r in rest]
-			f, args = rest[0], rest[1:]
+			f = run(rest[0], nv, cs)
 			if first is APPQ: 
-				with L("@app?"): L(f)
+				cs = tAdd(cs, -f.type.car)
+				with L("@app?"): 
+					L(f)
+					L(f.type)
+					L(cs)
+					if cs.car < 0: raise RunException
+				
+			args = [run(r, nv, cs) for r in rest[1:]]
 			if isFn(f): return f(*args)
 			if isinstance(f, Closure):
 				nv2 = Env(dict(zip(f.args, args)), f.nv)
-				return run(f.body, nv2)
+				return run(f.body, nv2, cs)
 			if isinstance(f, Function):
 				nv2 = Env(dict(zip(f.args, args)+[(f.name, f)]), f.nv)
-				return run(f.body, nv2)
+				return run(f.body, nv2, cs)
 		if first is LET:
 			arg, val, body = rest
-			nv2 = Env({arg: run(val, nv)}, nv)
-			return run(body, nv2)
+			nv2 = Env({arg: run(val, nv, cs)}, nv)
+			return run(body, nv2, cs)
 		if first is LAMB:
 			args, body = rest[:-1], rest[-1]
 			return Closure(args, body, nv, x.type)
 		if first is FUNC:
 			name, args, body = rest[0], rest[1:-1], rest[-1]
 			return Function(name, args, body, nv, x.type)
+		if first is LRUN:
+			limit, body = rest
+			newCS = cons(limit, cs)
+			L(newCS)
+			return run(body, nv, newCS)
 		if first is IF:
-			return run(rest[1], nv) if run(rest[0], nv) else run(rest[2], nv)
+			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
 		if first is TRY:
 			body, exc = rest
-			try: return run(body, nv)
-			except MyException: return run(exc, nv)
+			try: return run(body, nv, cs)
+			except RunException, e: 
+				with L("caught:"): L(repr(e))
+				return run(exc, nv, cs)
 		if first is RAISE:
-			raise MyException("the roof")
+			raise RunException
 	if isinstance(x, Symbol): return nv[x]
 	return x
 
@@ -79,6 +94,12 @@ def getType(x, nv):
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xType = tAdd(tMax(types[1], types[2]), types[0].car)
 			xNew = Expr([first]+list(new))
+		if first is LRUN:
+			limit = rest[0]
+			tBody, newBody = getType(rest[1], nv)
+			if tBody.car > limit: raise TypeException
+			xNew = Expr([first, limit-tBody.car, newBody])
+			xType = cons(limit+1, INFPAIR)
 		return xType, xNew
 	if isinstance(x, Symbol): return nv[x], x
 	return VTYPE, x

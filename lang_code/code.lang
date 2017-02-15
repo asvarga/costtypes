@@ -16,14 +16,15 @@
 ##  (+ (* x x) (* y y))
 
 ##  ([@lamb f (f (f 3))] [@lamb x (* x x)])
-##  ([@lamb f (f (f 3))] sqr)
+[@lrun 100 ([@lamb f (f (f 3))] sqr)]
+##  [@try [@lrun 100 ([@lamb f (f (f 3))] sqr)] "fail!"]
 
 ## the cost of this is a function of the cost of f
 ##  [@lamb f (f (f 3))] 
 ##  [@let f [@lamb x (* x x)] (f (f 3))]
 
-[@try [@if @false 42 [@raise]] 123]
-
+##  [@try [@if @false 42 [@raise]] 123]
+##  [@lrun 100 (+ 3 4)]
 
 
 

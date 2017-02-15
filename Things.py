@@ -34,7 +34,8 @@ class Op():
 	def __call__(self, *args, **kwargs): return self.op(*args, **kwargs)
 	def __repr__(self): return self.name
 
-class MyException(Exception): pass
+class RunException(Exception): pass
+class TypeException(Exception): pass
 
 APP = Unique("@app")
 APPQ = Unique("@app?")
@@ -42,6 +43,7 @@ LET = Unique("@let")
 LAMB = Unique("@lamb")
 FUNC = Unique("@func")
 IF = Unique("@if")
+LRUN = Unique("@lrun")
 TRY = Unique("@try")
 RAISE = Unique("@raise")
 COST = Unique("@cost")
@@ -55,6 +57,7 @@ CONSTS = {
 	"@lamb"		: LAMB,
 	"@func"		: FUNC,
 	"@if"		: IF,
+	"@lrun"		: LRUN,
 	"@try"		: TRY,
 	"@raise"	: RAISE,
 	"@cost"		: COST,
@@ -95,7 +98,7 @@ BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
 BASE[Symbol("-")] = Op(op.sub, OPTYPE, "-")
 BASE[Symbol("*")] = Op(op.mul, OPTYPE, "*")
 BASE[Symbol("/")] = Op(op.div, OPTYPE, "/")
-BASE[Symbol("sqr")] = Op(lambda x: x*x, OPTYPE, "sqr")
+BASE[Symbol("sqr")] = Op(lambda x: x*x, cons(10, VTYPE), "sqr")
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
 BASE[Symbol("print")] = Op(lambda x: L(x) and x, OPTYPE, "print")
