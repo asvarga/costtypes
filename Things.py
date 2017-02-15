@@ -81,11 +81,11 @@ def cons(car, cdr):
 VTYPE = cons(1, INFPAIR)
 OPTYPE = cons(1, VTYPE)
 
-def tMax(t1, t2):
+def pMax(t1, t2):
 	if t1 == INFPAIR or t2 == INFPAIR: return INFPAIR
-	return cons(max(t1.car, t2.car), tMax(t1.cdr, t2.cdr))
-def tAdd(t, x): return cons(t.car+x, t.cdr)
-def tRed(t): return Pair(1, t.cdr)
+	return cons(max(t1.car, t2.car), pMax(t1.cdr, t2.cdr))
+def pAdd(t, x): return cons(t.car+x, t.cdr)
+def pRed(t): return Pair(1, t.cdr)
 
 # print VTYPE.cRed, VTYPE.tRes
 # ft = FType(10, VTYPE)
@@ -98,7 +98,8 @@ BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
 BASE[Symbol("-")] = Op(op.sub, OPTYPE, "-")
 BASE[Symbol("*")] = Op(op.mul, OPTYPE, "*")
 BASE[Symbol("/")] = Op(op.div, OPTYPE, "/")
-BASE[Symbol("sqr")] = Op(lambda x: x*x, cons(10, VTYPE), "sqr")
+BASE[Symbol("sqr")] = Op(lambda x: x*x, cons(10, INFPAIR), "sqr")
+BASE[Symbol("neg")] = Op(lambda x: -x, cons(10, INFPAIR), "neg")
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
 BASE[Symbol("print")] = Op(lambda x: L(x) and x, OPTYPE, "print")
@@ -110,6 +111,7 @@ CBASE[Symbol("-")] = OPTYPE
 CBASE[Symbol("*")] = OPTYPE
 CBASE[Symbol("/")] = OPTYPE
 CBASE[Symbol("sqr")] = OPTYPE
+CBASE[Symbol("neg")] = OPTYPE
 CBASE[Symbol("x")] = VTYPE
 CBASE[Symbol("y")] = VTYPE
 

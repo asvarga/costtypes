@@ -21,13 +21,9 @@ def run(x, nv, cs=None):
 		if first is APP or first is APPQ:
 			f = run(rest[0], nv, cs)
 			if first is APPQ: 
-				cs = tAdd(cs, -f.type.car)
-				with L("@app?"): 
-					L(f)
-					L(f.type)
-					L(cs)
-					if cs.car < 0: raise RunException
-				
+				cs = pAdd(cs, -f.type.car)
+				with L("@app?"): L(f) and L(f.type) and L(cs)
+				if cs.car < 0: raise RunException	
 			args = [run(r, nv, cs) for r in rest[1:]]
 			if isFn(f): return f(*args)
 			if isinstance(f, Closure):
@@ -49,16 +45,15 @@ def run(x, nv, cs=None):
 		if first is LRUN:
 			limit, body = rest
 			newCS = cons(limit, cs)
-			L(newCS)
 			return run(body, nv, newCS)
 		if first is IF:
 			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
 		if first is TRY:
-			body, exc = rest
+			body, fail = rest
 			try: return run(body, nv, cs)
 			except RunException, e: 
-				with L("caught:"): L(repr(e))
-				return run(exc, nv, cs)
+				# with L("caught:"): L(repr(e))
+				return run(fail, nv, cs)
 		if first is RAISE:
 			raise RunException
 	if isinstance(x, Symbol): return nv[x]
@@ -69,19 +64,19 @@ def getType(x, nv):
 		first, rest, xType, xNew = x[0], x[1:], None, x
 		if first is APP:
 			types, new = zip(*[getType(r, nv) for r in rest])
-			f = types[0]
-			xType = cons(sum(r.car for r in types)+f.cdr.car, f.cdr.cdr)
-			if xType is INFPAIR: 
+			fType, argTypes = types[0], types[1:]
+			if fType.cdr is INFPAIR: 
 				xNew = Expr([APPQ]+list(new))
-				xType = VTYPE
+				xType = cons(sum(r.car for r in types), INFPAIR)
 			else:
 				xNew = Expr([APP]+list(new))
+				xType = pAdd(fType.cdr, sum(r.car for r in types))
 		elif first is LET:
 			arg, val, body = rest
 			tVal, newVal = getType(val, nv)
-			nv2 = Env({arg: tRed(tVal)}, nv)
+			nv2 = Env({arg: pRed(tVal)}, nv)
 			tBody, newBody = getType(body, nv2)
-			xType = tAdd(tBody, tVal.car+1)
+			xType = pAdd(tBody, tVal.car+1)
 			xNew = Expr([first, arg, newVal, newBody])
 		elif first is LAMB or first is FUNC:
 			args = rest[:-1]
@@ -92,14 +87,19 @@ def getType(x, nv):
 			xNew.type = xType
 		elif first is IF:
 			types, new = zip(*[getType(r, nv) for r in rest])
-			xType = tAdd(tMax(types[1], types[2]), types[0].car)
+			xType = pAdd(pMax(types[1], types[2]), types[0].car)
 			xNew = Expr([first]+list(new))
 		if first is LRUN:
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
 			if tBody.car > limit: raise TypeException
 			xNew = Expr([first, limit-tBody.car, newBody])
-			xType = cons(limit+1, INFPAIR)
+			xType = cons(limit+1, tBody.cdr)
+		if first is TRY:
+			tBody, newBody = getType(rest[0], nv)
+			tFail, newFail = getType(rest[1], nv)
+			xNew = Expr([first, newBody, newFail])
+			xType = cons(tBody.car+tFail.car, pMax(tBody.cdr, tFail.cdr))
 		return xType, xNew
 	if isinstance(x, Symbol): return nv[x], x
 	return VTYPE, x

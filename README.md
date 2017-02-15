@@ -2,9 +2,9 @@
 
 ### TODO ###
 
-* typecheck try and raise
-* check app?s and maybe raise exception at run time
 * dynamic runls
+* useful example, like iterative improvement of some approximation
+    - need mutable values
 
 
 * !!! [app? f a b] for when f's app-cost can't be known statically
