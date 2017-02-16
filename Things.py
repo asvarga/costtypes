@@ -33,6 +33,10 @@ class Op():
 		self.op , self.type, self.name = op, typ, name
 	def __call__(self, *args, **kwargs): return self.op(*args, **kwargs)
 	def __repr__(self): return self.name
+class Box():
+	def __init__(self, val): self.val = val
+	def setVal(self, val): self.val = val
+
 
 class RunException(Exception): pass
 class TypeException(Exception): pass
@@ -45,8 +49,9 @@ FUNC = Unique("@func")
 IF = Unique("@if")
 LRUN = Unique("@lrun")
 TRY = Unique("@try")
-RAISE = Unique("@raise")
+# RAISE = Unique("@raise")
 COST = Unique("@cost")
+SEQ = Unique("@seq")
 
 CONSTS = {
 	"@true"		: True,
@@ -59,8 +64,9 @@ CONSTS = {
 	"@if"		: IF,
 	"@lrun"		: LRUN,
 	"@try"		: TRY,
-	"@raise"	: RAISE,
+	# "@raise"	: RAISE,
 	"@cost"		: COST,
+	"@seq"		: SEQ,
 }
 
 def isFn(x): return hasattr(x, '__call__')
@@ -98,11 +104,14 @@ BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
 BASE[Symbol("-")] = Op(op.sub, OPTYPE, "-")
 BASE[Symbol("*")] = Op(op.mul, OPTYPE, "*")
 BASE[Symbol("/")] = Op(op.div, OPTYPE, "/")
-BASE[Symbol("sqr")] = Op(lambda x: x*x, cons(10, INFPAIR), "sqr")
-BASE[Symbol("neg")] = Op(lambda x: -x, cons(10, INFPAIR), "neg")
+BASE[Symbol("sqr")] = Op(lambda x: x*x, OPTYPE, "sqr")
+BASE[Symbol("neg")] = Op(lambda x: -x, OPTYPE, "neg")
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
 BASE[Symbol("print")] = Op(lambda x: L(x) and x, OPTYPE, "print")
+BASE[Symbol("box")] = Op(lambda val: Box(val), OPTYPE, "box")
+BASE[Symbol("get")] = Op(lambda box: box.val, OPTYPE, "get")
+BASE[Symbol("set")] = Op(lambda box, val: box.setVal(val), OPTYPE, "set")
 
 
 CBASE = {}
@@ -114,7 +123,10 @@ CBASE[Symbol("sqr")] = OPTYPE
 CBASE[Symbol("neg")] = OPTYPE
 CBASE[Symbol("x")] = VTYPE
 CBASE[Symbol("y")] = VTYPE
-
+CBASE[Symbol("print")] = OPTYPE
+CBASE[Symbol("box")] = OPTYPE
+CBASE[Symbol("get")] = OPTYPE
+CBASE[Symbol("set")] = OPTYPE
 
 
 

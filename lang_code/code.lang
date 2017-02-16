@@ -17,9 +17,9 @@
 
 ##  ([@lamb f (f (f 3))] [@lamb x (* x x)])
 ##  [@lrun 100 ([@lamb f (f (f 3))] sqr)]
-[@try [@lrun 20 
-	([@lamb f g (f (g (+ 1 2)))] neg sqr)
-	] "fail!"]
+##  [@try [@lrun 30 
+##  	([@lamb f g (f (g (+ 1 2)))] neg sqr)
+##  	] "fail!"]
 ##  ([@try [@lrun 0 [@lamb x y (+ (* x x) (* y y))]] +] 3 4)
 
 
@@ -30,7 +30,17 @@
 ##  [@try [@if @false 42 [@raise]] 123]
 ##  [@lrun 100 (+ 3 4)]
 
-
+[@let b (box 1.0)
+	[@try [@lrun 40 
+		([@func step
+			[@seq
+				(set b (+ 1 (/ 1 (get b))))
+				(print (get b))
+				(step)
+			]
+		])
+	] (get b)]
+]
 
 
 

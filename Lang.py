@@ -12,7 +12,9 @@ def runs(x, nv=None, tnv=None):
 	L(typ)
 	L(new)
 	L("----")
-	L(run(new, nv or Env({}, BASE)))
+	result = run(new, nv or Env({}, BASE))
+	L("----")
+	L(result)
 
 def run(x, nv, cs=None):
 	cs = cs or INFPAIR
@@ -22,7 +24,7 @@ def run(x, nv, cs=None):
 			f = run(rest[0], nv, cs)
 			if first is APPQ: 
 				cs = pAdd(cs, -f.type.car)
-				with L("@app?"): L(f) and L(f.type) and L(cs)
+				# with L("@app?"): L(f) and L(f.type) and L(cs)
 				if cs.car < 0: raise RunException	
 			args = [run(r, nv, cs) for r in rest[1:]]
 			if isFn(f): return f(*args)
@@ -54,8 +56,11 @@ def run(x, nv, cs=None):
 			except RunException, e: 
 				# with L("caught:"): L(repr(e))
 				return run(fail, nv, cs)
-		if first is RAISE:
-			raise RunException
+		# if first is RAISE:
+		# 	raise RunException
+		if first is SEQ:
+			for r in rest: run(r, nv, cs)
+			return None
 	if isinstance(x, Symbol): return nv[x]
 	return x
 
@@ -100,6 +105,10 @@ def getType(x, nv):
 			tFail, newFail = getType(rest[1], nv)
 			xNew = Expr([first, newBody, newFail])
 			xType = cons(tBody.car+tFail.car, pMax(tBody.cdr, tFail.cdr))
+		if first is SEQ:
+			types, new = zip(*[getType(r, nv) for r in rest])
+			xNew = Expr([first]+list(new))
+			xType = cons(sum(t.car for t in types), INFPAIR)
 		return xType, xNew
 	if isinstance(x, Symbol): return nv[x], x
 	return VTYPE, x

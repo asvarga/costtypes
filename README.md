@@ -3,8 +3,7 @@
 ### TODO ###
 
 * dynamic runls
-* useful example, like iterative improvement of some approximation
-    - need mutable values
+    - use credits that is function of available (ex: half)
 
 
 * !!! [app? f a b] for when f's app-cost can't be known statically
