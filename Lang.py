@@ -48,17 +48,18 @@ def run(x, nv, cs=None):
 			name, args, body = rest[0], rest[1:-1], rest[-1]
 			return Function(name, args, body, nv, x.type)
 		if first is LRUN:
-			limit, body = rest
+			limit, body, fail = rest
 			newCS = cons(limit, cs)
-			return run(body, nv, newCS)
+			try: return run(body, nv, newCS)
+			except RunException, e: return run(fail, nv, cs)
 		if first is IF:
 			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
-		if first is TRY:
-			body, fail = rest
-			try: return run(body, nv, cs)
-			except RunException, e: 
-				# with L("caught:"): L(repr(e))
-				return run(fail, nv, cs)
+		# if first is TRY:
+		# 	body, fail = rest
+		# 	try: return run(body, nv, cs)
+		# 	except RunException, e: 
+		# 		# with L("caught:"): L(repr(e))
+		# 		return run(fail, nv, cs)
 		# if first is RAISE:
 		# 	raise RunException
 		if first is SEQ:
@@ -100,14 +101,16 @@ def getType(x, nv):
 		if first is LRUN:
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
-			if tBody.car > limit: raise TypeException
-			xNew = Expr([first, limit-tBody.car, newBody])
-			xType = cons(limit+1, tBody.cdr)
-		if first is TRY:
-			tBody, newBody = getType(rest[0], nv)
-			tFail, newFail = getType(rest[1], nv)
-			xNew = Expr([first, newBody, newFail])
-			xType = cons(tBody.car+tFail.car, pMax(tBody.cdr, tFail.cdr))
+			tFail, newFail = getType(rest[2], nv)
+			if tBody.car > limit: raise TypeException("Definitely can't afford")
+			xNew = Expr([first, limit-tBody.car, newBody, newFail])
+			# xType = cons(limit+1, tBody.cdr)
+			xType = cons(limit+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
+		# if first is TRY:
+		# 	tBody, newBody = getType(rest[0], nv)
+		# 	tFail, newFail = getType(rest[1], nv)
+		# 	xNew = Expr([first, newBody, newFail])
+		# 	xType = cons(tBody.car+tFail.car, pMax(tBody.cdr, tFail.cdr))
 		if first is SEQ:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xNew = Expr([first]+list(new))
