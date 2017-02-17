@@ -8,13 +8,16 @@ def runf(file_name):
 	with open(file_name, 'r') as f: runs(f.read())
 def runs(x, nv=None, tnv=None): 
 	# L(run(parse(x), nv or Env({}, BASE)))
-	typ, new = getType(parse(x), tnv or Env({}, CBASE))
-	L(typ)
-	L(new)
-	L("----")
-	result = run(new, nv or Env({}, BASE))
-	L("----")
-	L(result)
+	typ, new, result = None, None, None
+	with L("TYPING..."):
+		typ, new = getType(parse(x), tnv or Env({}, CBASE))
+	with L("RESULTS:"):
+		with L("type:"): L(typ)
+		with L("modified:"): L(new)
+	with L("RUNNING..."):
+		result = run(new, nv or Env({}, BASE))
+	with L("RESULT:"):
+		L(result)
 
 def run(x, nv, cs=None):
 	cs = cs or INFPAIR
@@ -113,37 +116,11 @@ def getType(x, nv):
 	if isinstance(x, Symbol): return nv[x], x
 	return VTYPE, x
 
-def getType2(x, nv):
-	if isinstance(x, Expr):
-		first, rest = x[0], x[1:]
-		if first is APP:
-			rest = [getType(r, nv) for r in rest]
-			fRed = rest[0].tRed
-			return EType(sum(r.cRed+1 for r in rest)+fRed.cApp, fRed.tApp)
-		if first is LAMB:
-			args = rest[:-1]
-			nv2 = Env({arg:VTYPE for arg in args}, nv)
-			body = getType(rest[-1], nv2)
-			return EType(len(rest), FType(len(args)+body.cRed, body.tRed))
-		if first is IF:
-			rest = [getType(r, nv) for r in rest]
-			return maxType(rest[1], rest[2]).add(rest[0].cRed)
-		raise Exception("unimplemented")
-	if isinstance(x, Symbol): return nv[x]	#EType(1, nv[x])
-	return VTYPE
 
 
-# def run(x, nv):
-# 	if isinstance(x, Pair): 
-# 		L, R = run(x.L, nv), run(x.R, nv)
-# 		if isinstance(L, Lambda): 
-# 			nv2 = Env(dict(zip(L.args.val, R)), L.nv, nv)
-# 			return run(L.body.val, nv2)
-# 		return L(*R)
-# 	if isinstance(x, Rail): return Array([run(xi, nv) for xi in x])
-# 	if isinstance(x, Symbol): return eget(nv, x)
-# 	if x is NV:		return nv
-# 	if x is SNV: 	return nv.snv
-# 	if x is DNV: 	return nv.dnv
-# 	if x is RUN: 	return runq
-# 	return x
+
+
+
+
+
+

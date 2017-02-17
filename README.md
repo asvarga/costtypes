@@ -1,25 +1,44 @@
 # README #
 
+### MOTIVATION ###
+* Safely run untrusted code
+* Just limiting run-time
+    - Meaningful platform-independent concept of "time": credits
+* Lightweight
+
+### RELATION TO SANDBOXING ###
+* Only focused on the resource of computation itself
+* Heirarchy of sandboxing scales:
+    - different hardware: multiple computers
+    - different process: OS level
+    - same process, different thread: sandboxing, MrEd
+    - same thread: this!
+
+### DISCLAIMER ###
+* Probably wrong!
+
+### BASE LANGUAGE ###
+- @xxx // constants
+- [@xxx y z] // special form
+- (f a b) // syntactic sugar for [@app f a b]
+
+### IMPLEMENTATION ###
+* Static: A type system for cost, in credits
+    - a cost type (currently) is
+        + n:int // costs n to reduce
+        + (n:int, t:type) // costs n to reduce to function of cost type t
+    - improvements mentinoed below  
+* Dynamic: Inserted checks on code that can't be typed statically
+    - turns "@app" into "@app?"
+    - wraps
+
 ### TODO ###
 
 * dynamic runls
     - use credits that is function of available (ex: half)
 
 
-* !!! [app? f a b] for when f's app-cost can't be known statically
-    - first just compute eval f to f_
-    - then check if it has enough credit to compute a, b, and (f_ a b)
-        + iff so, do it
-* Do exprs need to have cost attached?
-    - just some? 
-    - *just closures?*
-    - just lambda exprs? 
-    - sometimes the cost of an expr that evals to a closure can be known before actually evaling, but sometimes it can't
 
-* consider building off pyret project
-    - pro: has type annotations
-    - con: no try/catch
-* there may always be cases where cost can be known statically but is hard to prove
 
 
 

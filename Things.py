@@ -13,6 +13,10 @@ class Expr(tuple):
 		end = ":"+repr(self.type) if self.type else ""
 		if self[0] == APP: return "("+" ".join(map(repr, self[1:]))+")"+end
 		else: return "["+" ".join(map(repr, self))+"]"+end
+	def __getitem__(self, ind):
+		return tuple.__getitem__(self, ind) if ind < len(self) else None
+	def __getslice__(self, i, j):
+		return Expr(tuple.__getslice__(self, i, j))
 class Symbol(str):
 	def __repr__(self): return self
 class Unique(): 
