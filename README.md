@@ -36,9 +36,9 @@
 * Dynamic: Inserted checks on code that can't be typed statically
     - [@lrun limit body fail] limits the runtime of the body
         + a stack of alloted credits is maintained
-        + "\@lrun" takes limit credits out of its allotment and adds a layer for body to run with
+        + "@lrun" takes limit credits out of its allotment and adds a layer for body to run with
         + if body runs out of credits during run-time an error is raised and caught here, and fail is run
-    - turns "\@app" into "\@app?"
+    - turns "@app" into "@app?"
         + evaluates f
         + checks if it can afford to apply f now that its type is known
         + either applies it or raises error accordingly
@@ -57,7 +57,7 @@
 
 # TODO #
 
-* must dynamically check known parts of an "\@app?", because they could run any number of times
+* must dynamically check known parts of an "@app?", because they could run any number of times
 * dynamic runls
     - use credits that is function of available (ex: half)
 
