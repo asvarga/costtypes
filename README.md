@@ -70,12 +70,12 @@
 # TODO #
 
 * fix `frun` and `drun`
-* `drun` could be variadic, and the function could return a vector the size of the number of branches, that sum to <= the allotted credits
-
 * attach type to anything
 
 
-
+# NOTES #
+* `drun` could be variadic, and the function could return a vector the size of the number of branches, that sum to <= the allotted credits
+* `lrun` doesn't take responsibility for its fail-case, but `frun` does
 
 
 

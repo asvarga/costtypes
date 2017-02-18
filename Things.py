@@ -40,6 +40,7 @@ class Op():
 class Box():
 	def __init__(self, val): self.val = val
 	def setVal(self, val): self.val = val
+	def __repr__(self): return "(box "+repr(self.val)+")"
 
 
 class CreditException(Exception): pass

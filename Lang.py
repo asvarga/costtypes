@@ -4,7 +4,7 @@ from Disp import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
-VERBOSE = False
+VERBOSE = True
 def VL(*args): return L(*args) if VERBOSE else L
 
 def runf(file_name):
@@ -35,14 +35,19 @@ def run(x, nv, cs=None):
 		if first is APP or first is APPQ:
 			f = run(rest[0], nv, cs)
 			if first is APPQ: 
-				cs = pAdd(cs, -f.type.car)
-				with VL("@app?:", f): VL("credStack:", cs)
+				with VL("@app?", f.type):
+					VL("old cs:", cs)
+					cs = pAdd(cs, -f.type.car)
+					VL("new cs:", cs)
 				if cs.car < 0: raise CreditException	
 			return app(f, *[run(r, nv, cs) for r in rest[1:]])
 		if first is LRUN:
 			limit, body, fail = rest
 			newCS = cons(limit, cs)
-			cs.car -= newCS.car
+			with VL("@lrun"):
+				VL("old cs:", cs)
+				cs.car -= newCS.car
+				VL("new cs:", newCS)
 			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
@@ -50,10 +55,12 @@ def run(x, nv, cs=None):
 
 		if first is FRUN:
 			body, fail = rest
-			newCS = cons(cs.car-body.type.car-fail.type.car, cs)
-			try: 
-				if newCS.car < 0: raise CreditException
-				return run(body, nv, newCS)
+			newCS = cons(cs.car, cs)
+			with VL("@frun"):
+				VL("old cs:", cs)
+				cs.car = 0
+				VL("new cs:", newCS)
+			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
 				return run(fail, nv, cs)
@@ -107,15 +114,14 @@ def getType(x, nv):
 			else:
 				newBody.type = tBody
 				xType = cons(limit+tFail.car-1, pMax(tBody.cdr, tFail.cdr))
-				# xType = cons(tBody.car+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
 				xNew = Expr([first, limit, newBody, newFail])
 
 		elif first is FRUN:
 			tBody, newBody = getType(rest[0], nv)
-			tFail, newFail = getType(rest[1] or APPNOOP, nv)
-			newBody.type = tBody
-			newFail.type = tFail
-			xType = cons(3, pMax(tBody.cdr, tFail.cdr))
+			tFail, newFail = getType(rest[1], nv)
+			# newBody.type = tBody
+			# newFail.type = tFail
+			xType = cons(tBody.car+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
 			xNew = Expr([first, newBody, newFail])
 
 		elif first is DRUN:

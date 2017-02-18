@@ -1,32 +1,33 @@
 
-
-##  [@lrun 125
+##  nested @lruns
+##  [@lrun 200
 ##  	[@let b (box 1.0)
-##  		[@frun
+##  		[@lrun 100
 ##  			([@func step [@seq
 ##  				(set b (+ 1 (/ 1 (get b))))
-##  				(print "new:" (get b))
+##  				(print "b =" (get b))
 ##  				(step)
 ##  			]])
+##  		(get b)]
 ##  		##  ([@lamb f (f (f 3))] sqr)]
-##  		([@func step (step)])]
+##  		##  ([@func step (step)])]
 ##  	]
-##  ]
+##  "fail"]
 
-
+##  @frun in an @lrun
 [@lrun 200
 	[@let b (box 1.0)
-		[@lrun 100
+		[@frun
 			([@func step [@seq
 				(set b (+ 1 (/ 1 (get b))))
-				(print "new:" (get b))
+				(print "b =" (get b))
 				(step)
 			]])
 		(get b)]
 		##  ([@lamb f (f (f 3))] sqr)]
 		##  ([@func step (step)])]
 	]
-"hi"]
+"fail"]
 
 
 
