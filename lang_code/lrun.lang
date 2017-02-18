@@ -1,11 +1,11 @@
 
 
-##  [@lrun 30 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
-##  [@lrun 12 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
-##  [@lrun 8 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
+##  try 20, 10
+##  [@lrun 20 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
+
 
 [@let b (box 1.0)
-	[@lrun 100 
+	[@lrun 125		## try 125, 25, 5 
 		([@func step [@seq
 			(set b (+ 1 (/ 1 (get b))))
 			(print "new:" (get b))

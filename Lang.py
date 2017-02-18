@@ -49,9 +49,7 @@ def run(x, nv, cs=None):
 		if first is LRUN:
 			limit, body, fail = rest
 			newCS = cons(limit-body.type.car, cs)
-			try: 
-				if newCS.car < 0: raise CreditException
-				return run(body, nv, newCS)
+			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
 				return run(fail, nv, cs)
@@ -97,10 +95,11 @@ def getType(x, nv):
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
 			tFail, newFail = getType(rest[2], nv)
-			newBody.type = tBody
-			# if tBody.car > limit: raise TypeException("Definitely can't afford")
-			xType = cons(limit+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
-			xNew = Expr([first, limit, newBody, newFail])
+			if tBody.car > limit: xType, xNew = tFail, newFail
+			else:
+				newBody.type = tBody
+				xType = cons(limit+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
+				xNew = Expr([first, limit, newBody, newFail])
 		if first is SEQ:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xNew = Expr([first]+list(new))

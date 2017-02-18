@@ -43,7 +43,7 @@ class Box():
 
 
 class CreditException(Exception): pass
-class TypeException(Exception): pass
+# class TypeException(Exception): pass
 
 APP = Unique("@app")
 APPQ = Unique("@app?")
