@@ -42,7 +42,7 @@ class Box():
 	def setVal(self, val): self.val = val
 
 
-class RunException(Exception): pass
+class CreditException(Exception): pass
 class TypeException(Exception): pass
 
 APP = Unique("@app")
@@ -97,11 +97,7 @@ def pMax(t1, t2):
 def pAdd(t, x): return cons(t.car+x, t.cdr)
 def pRed(t): return Pair(1, t.cdr)
 
-# print VTYPE.cRed, VTYPE.tRes
-# ft = FType(10, VTYPE)
-# print ft.cRed, ft.tRes, ft.cApp, ft.tRet
-# et = EType(100, ft)
-# print et.cRed, et.tRes, et.tRes.cApp
+
 
 BASE = {}
 BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
@@ -112,7 +108,7 @@ BASE[Symbol("sqr")] = Op(lambda x: x*x, OPTYPE, "sqr")
 BASE[Symbol("neg")] = Op(lambda x: -x, OPTYPE, "neg")
 BASE[Symbol("x")] = 3
 BASE[Symbol("y")] = 4
-BASE[Symbol("print")] = Op(lambda x: L(x) and x, OPTYPE, "print")
+BASE[Symbol("print")] = Op(L.log, OPTYPE, "print")
 BASE[Symbol("box")] = Op(lambda val: Box(val), OPTYPE, "box")
 BASE[Symbol("get")] = Op(lambda box: box.val, OPTYPE, "get")
 BASE[Symbol("set")] = Op(lambda box, val: box.setVal(val), OPTYPE, "set")

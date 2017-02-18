@@ -19,6 +19,7 @@
     - same thread: this!
 
 ### DISCLAIMER ###
+* Simple prototype
 * Probably wrong!
 
 ### BASE LANGUAGE ###
@@ -50,6 +51,7 @@
 
 ### POSSIBLE IMPROVEMENTS ###
 * "dependent types": type of function is function of types of args
+    - types for variadic functions
 * other good ideas
 * allow arbitrary proofs about cost
 
@@ -57,7 +59,6 @@
 
 # TODO #
 
-* must dynamically check known parts of an "@app?", because they could run any number of times
 * dynamic runls
     - use credits that is function of available (ex: half)
 

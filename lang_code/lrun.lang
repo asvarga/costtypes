@@ -5,10 +5,10 @@
 ##  [@lrun 8 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
 
 [@let b (box 1.0)
-	[@lrun 40 
+	[@lrun 100 
 		([@func step [@seq
 			(set b (+ 1 (/ 1 (get b))))
-			(print (get b))
+			(print "new:" (get b))
 			(step)
 		]])
 	(get b)]

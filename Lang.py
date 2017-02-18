@@ -4,20 +4,19 @@ from Disp import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
+VERBOSE = False
+def VL(*args): return L(*args) if VERBOSE else L
+
 def runf(file_name):
 	with open(file_name, 'r') as f: runs(f.read())
 def runs(x, nv=None, tnv=None): 
-	# L(run(parse(x), nv or Env({}, BASE)))
 	typ, new, result = None, None, None
-	with L("TYPING..."):
-		typ, new = getType(parse(x), tnv or Env({}, CBASE))
+	with L("TYPING..."): typ, new = getType(parse(x), tnv or Env({}, CBASE))
 	with L("RESULTS:"):
-		with L("type:"): L(typ)
+		L("type:", typ)
 		with L("modified:"): L(new)
-	with L("RUNNING..."):
-		result = run(new, nv or Env({}, BASE))
-	with L("RESULT:"):
-		L(result)
+	with L("RUNNING..."): result = run(new, nv or Env({}, BASE))
+	with L("RESULT:"): L(result)
 
 def run(x, nv, cs=None):
 	cs = cs or INFPAIR
@@ -27,8 +26,8 @@ def run(x, nv, cs=None):
 			f = run(rest[0], nv, cs)
 			if first is APPQ: 
 				cs = pAdd(cs, -f.type.car)
-				# with L("@app?"): L(f) and L(f.type) and L(cs)
-				if cs.car < 0: raise RunException	
+				with VL("@app?:", f): VL("credStack:", cs)
+				if cs.car < 0: raise CreditException	
 			args = [run(r, nv, cs) for r in rest[1:]]
 			if isFn(f): return f(*args)
 			if isinstance(f, Closure):
@@ -49,19 +48,15 @@ def run(x, nv, cs=None):
 			return Function(name, args, body, nv, x.type)
 		if first is LRUN:
 			limit, body, fail = rest
-			newCS = cons(limit, cs)
-			try: return run(body, nv, newCS)
-			except RunException, e: return run(fail, nv, cs)
+			newCS = cons(limit-body.type.car, cs)
+			try: 
+				if newCS.car < 0: raise CreditException
+				return run(body, nv, newCS)
+			except CreditException, e: 
+				with VL("caught:"): VL(repr(e))
+				return run(fail, nv, cs)
 		if first is IF:
 			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
-		# if first is TRY:
-		# 	body, fail = rest
-		# 	try: return run(body, nv, cs)
-		# 	except RunException, e: 
-		# 		# with L("caught:"): L(repr(e))
-		# 		return run(fail, nv, cs)
-		# if first is RAISE:
-		# 	raise RunException
 		if first is SEQ:
 			for r in rest: run(r, nv, cs)
 			return None
@@ -93,7 +88,7 @@ def getType(x, nv):
 			tBody, newBody = getType(rest[-1], nv2)
 			xType = cons(len(rest), tBody)
 			xNew = Expr([first]+list(args)+[newBody])
-			xNew.type = xType
+			xNew.type = xType.cdr
 		elif first is IF:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xType = pAdd(pMax(types[1], types[2]), types[0].car)
@@ -102,15 +97,10 @@ def getType(x, nv):
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
 			tFail, newFail = getType(rest[2], nv)
-			if tBody.car > limit: raise TypeException("Definitely can't afford")
-			xNew = Expr([first, limit-tBody.car, newBody, newFail])
-			# xType = cons(limit+1, tBody.cdr)
+			newBody.type = tBody
+			# if tBody.car > limit: raise TypeException("Definitely can't afford")
 			xType = cons(limit+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
-		# if first is TRY:
-		# 	tBody, newBody = getType(rest[0], nv)
-		# 	tFail, newFail = getType(rest[1], nv)
-		# 	xNew = Expr([first, newBody, newFail])
-		# 	xType = cons(tBody.car+tFail.car, pMax(tBody.cdr, tFail.cdr))
+			xNew = Expr([first, limit, newBody, newFail])
 		if first is SEQ:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xNew = Expr([first]+list(new))
