@@ -23,31 +23,38 @@
 * Probably wrong!
 
 ### BASE LANGUAGE ###
-* *`@`xxx* // constants
-* [*`@`xxx* y z] // special form
-* (f a b) // syntactic sugar for [*`@`app* f a b]
+* `@xxx` // constants
+* `[@xxx y z]` // special form
+* `(f a b)` // syntactic sugar for `[@app f a b]`
 
 ### IMPLEMENTATION ###
-* Static: A type system for cost, in credits
+* A type system for cost, in credits
     - a cost type (currently) is
-        + n:int // costs n to reduce
-        + (n:int, t:type) // costs n to reduce to function of cost type t
+        + `n:int` // costs n to reduce
+        + `(n:int, t:type)` // costs n to reduce to function of cost type `t`
     - assumes that the code passes usual type-checks
     - improvements mentioned below  
+* Static: A type system for cost, in credits
+    - `[@lrun limit body fail]` 
+        + limits the runtime of the body 
+        + type is approximately `limit`
+        + if `type of body > limit`: replace whole expr with fail
+    - `[@app f a b]`
+        + if the type of `f` can't be known statically, becomes an `@app?` expr
 * Dynamic: Inserted checks on code that can't be typed statically
-    - [*`@`lrun* limit body fail] limits the runtime of the body
-        + a stack of alloted credits is maintained
-        + *`@`lrun* takes limit credits out of its allotment and adds a layer for body to run with
-        + if body runs out of credits during run-time an error is raised and caught here, and fail is run
-    - turns *`@`app* into *`@`app?*
-        + evaluates f
-        + checks if it can afford to apply f now that its type is known
-        + either applies it or raises error accordingly
+    - `[@lrun limit body fail]`
+        + a stack of allotted credits is maintained
+        + `@lrun` adds a stack frame with `limit` credits for `body`
+        + if `body` runs out of credits during run-time, an exception is raised and caught here, and `fail` is run
+    - `[@app? f a b]`
+        + evaluates `f`
+        + checks if it can afford to apply `f` now that its type is known
+        + either applies `f` or raises exception accordingly
 
 ### TYPE SYSTEM METRICS ###
 * No free lunch!
 * Minimize "arbitrage": 
-    - (Max time to run type x)/(Min time to run type x)/x
+    - `(Max time to run X)/(Min time to run X)`
 
 ### POSSIBLE IMPROVEMENTS ###
 * "dependent types": type of function is function of types of args
@@ -59,7 +66,7 @@
 
 # TODO #
 
-* dynamic runls
+* dynamic version of `@lrun`
     - use credits that is function of available (ex: half)
 
 
