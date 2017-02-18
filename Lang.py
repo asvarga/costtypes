@@ -45,7 +45,9 @@ def run(x, nv, cs=None):
 			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
-				return run(fail, nv, cs)
+				# return run(fail, nv, cs)
+				try: return run(fail, nv, cons(0, cs))
+				except CreditException, e: return None
 		if first is FRUN:
 			body, fail = rest
 			newCS = cons(cs.car-body.type.car-fail.type.car, cs)
