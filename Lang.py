@@ -41,13 +41,13 @@ def run(x, nv, cs=None):
 			return app(f, *[run(r, nv, cs) for r in rest[1:]])
 		if first is LRUN:
 			limit, body, fail = rest
-			newCS = cons(limit-body.type.car-fail.type.car, cs)
+			newCS = cons(limit, cs)
+			cs.car -= newCS.car
 			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
-				# return run(fail, nv, cs)
-				try: return run(fail, nv, cons(0, cs))
-				except CreditException, e: return None
+				return run(fail, nv, cs)
+
 		if first is FRUN:
 			body, fail = rest
 			newCS = cons(cs.car-body.type.car-fail.type.car, cs)
@@ -102,13 +102,14 @@ def getType(x, nv):
 		elif first is LRUN:
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
-			tFail, newFail = getType(rest[2] or APPNOOP, nv)
+			tFail, newFail = getType(rest[2], nv)
 			if tBody.car > limit: xType, xNew = tFail, newFail
 			else:
 				newBody.type = tBody
-				newFail.type = tFail
-				xType = cons(limit, pMax(tBody.cdr, tFail.cdr))
+				xType = cons(limit+tFail.car-1, pMax(tBody.cdr, tFail.cdr))
+				# xType = cons(tBody.car+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
 				xNew = Expr([first, limit, newBody, newFail])
+
 		elif first is FRUN:
 			tBody, newBody = getType(rest[0], nv)
 			tFail, newFail = getType(rest[1] or APPNOOP, nv)

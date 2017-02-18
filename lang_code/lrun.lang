@@ -11,8 +11,15 @@
 			(print "new:" (get b))
 			(step)
 		]])
-	([@func step (step)])]##(get b)]
+	(get b)]
 ]
+
+##  [@lrun 125		## try 125, 25, 5 
+##  	([@func step [@seq
+##  		(print "new:" (+ 1 (/ 1 (+ 1 (/ 1 (+ 1 1.0))))))
+##  		(step)
+##  	]])
+##  ]##(get b)]
 
 
 

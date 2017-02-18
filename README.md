@@ -69,10 +69,7 @@
 
 # TODO #
 
-* fix fail-case problem
-    - fail-case is trusted by that expr, should be caught higher up
-    - might need to get rid of fail cases, all code should be wrapped
-    - might need upper bound types
+* fix `frun` and `drun`
 * `drun` could be variadic, and the function could return a vector the size of the number of branches, that sum to <= the allotted credits
 
 * attach type to anything
