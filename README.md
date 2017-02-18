@@ -23,9 +23,9 @@
 * Probably wrong!
 
 ### BASE LANGUAGE ###
-* @xxx // constants
-* [@xxx y z] // special form
-* (f a b) // syntactic sugar for [@app f a b]
+* *`@`xxx* // constants
+* [*`@`xxx* y z] // special form
+* (f a b) // syntactic sugar for [*`@`app* f a b]
 
 ### IMPLEMENTATION ###
 * Static: A type system for cost, in credits
@@ -35,11 +35,11 @@
     - assumes that the code passes usual type-checks
     - improvements mentioned below  
 * Dynamic: Inserted checks on code that can't be typed statically
-    - [@lrun limit body fail] limits the runtime of the body
+    - [*`@`lrun* limit body fail] limits the runtime of the body
         + a stack of alloted credits is maintained
-        + "@lrun" takes limit credits out of its allotment and adds a layer for body to run with
+        + *`@`lrun* takes limit credits out of its allotment and adds a layer for body to run with
         + if body runs out of credits during run-time an error is raised and caught here, and fail is run
-    - turns "@app" into "@app?"
+    - turns *`@`app* into *`@`app*?
         + evaluates f
         + checks if it can afford to apply f now that its type is known
         + either applies it or raises error accordingly
