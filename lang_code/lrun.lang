@@ -11,6 +11,8 @@
 			(print "new:" (get b))
 			(step)
 		]])
-	(get b)]
+	([@func step (step)])]##(get b)]
 ]
+
+
 

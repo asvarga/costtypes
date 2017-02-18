@@ -52,6 +52,8 @@ LAMB = Unique("@lamb")
 FUNC = Unique("@func")
 IF = Unique("@if")
 LRUN = Unique("@lrun")
+FRUN = Unique("@frun")
+DRUN = Unique("@drun")
 TRY = Unique("@try")
 # RAISE = Unique("@raise")
 COST = Unique("@cost")
@@ -67,6 +69,8 @@ CONSTS = {
 	"@func"		: FUNC,
 	"@if"		: IF,
 	"@lrun"		: LRUN,
+	"@frun"		: FRUN,
+	"@drun"		: DRUN,
 	"@try"		: TRY,
 	# "@raise"	: RAISE,
 	"@cost"		: COST,
@@ -97,7 +101,8 @@ def pMax(t1, t2):
 def pAdd(t, x): return cons(t.car+x, t.cdr)
 def pRed(t): return Pair(1, t.cdr)
 
-
+NOOP = Op(lambda *args: None, OPTYPE, "noop")
+APPNOOP = Expr([APP, NOOP])
 
 BASE = {}
 BASE[Symbol("+")] = Op(op.add, OPTYPE, "+")
@@ -112,6 +117,8 @@ BASE[Symbol("print")] = Op(L.log, OPTYPE, "print")
 BASE[Symbol("box")] = Op(lambda val: Box(val), OPTYPE, "box")
 BASE[Symbol("get")] = Op(lambda box: box.val, OPTYPE, "get")
 BASE[Symbol("set")] = Op(lambda box, val: box.setVal(val), OPTYPE, "set")
+BASE[Symbol("id")] = Op(lambda x: x, OPTYPE, "id")
+BASE[Symbol("noop")] = NOOP
 
 
 CBASE = {}
@@ -127,7 +134,8 @@ CBASE[Symbol("print")] = OPTYPE
 CBASE[Symbol("box")] = OPTYPE
 CBASE[Symbol("get")] = OPTYPE
 CBASE[Symbol("set")] = OPTYPE
-
+CBASE[Symbol("id")] = OPTYPE
+CBASE[Symbol("noop")] = OPTYPE
 
 
 

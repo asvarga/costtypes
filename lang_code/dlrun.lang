@@ -1,0 +1,39 @@
+
+
+##  [@lrun 125
+##  	[@let b (box 1.0)
+##  		[@frun
+##  			([@func step [@seq
+##  				(set b (+ 1 (/ 1 (get b))))
+##  				(print "new:" (get b))
+##  				(step)
+##  			]])
+##  		(get b)]
+##  	]
+##  ]
+
+
+
+
+[@lrun 200
+	[@let b (box 1.0)
+		[@drun [@lamb x (/ x 2)]
+			([@func step [@seq
+				(set b (+ 1 (/ 1 (get b))))
+				(print "new:" (get b))
+				(step)
+			]])
+			([@func step [@seq
+				(set b (+ 4 (/ 1 (get b))))
+				(print "new:" (get b))
+				(step)
+			]])
+		]
+	]
+]
+
+
+
+
+
+

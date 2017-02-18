@@ -20,6 +20,16 @@ def runs(x, nv=None, tnv=None):
 
 def run(x, nv, cs=None):
 	cs = cs or INFPAIR
+
+	def app(f, *args):
+		if isFn(f): return f(*args)
+		if isinstance(f, Closure):
+			nv2 = Env(dict(zip(f.args, args)), f.nv)
+			return run(f.body, nv2, cs)
+		if isinstance(f, Function):
+			nv2 = Env(dict(zip(f.args, args)+[(f.name, f)]), f.nv)
+			return run(f.body, nv2, cs)
+
 	if isinstance(x, Expr):
 		first, rest = x[0], x[1:]
 		if first is APP or first is APPQ:
@@ -28,14 +38,35 @@ def run(x, nv, cs=None):
 				cs = pAdd(cs, -f.type.car)
 				with VL("@app?:", f): VL("credStack:", cs)
 				if cs.car < 0: raise CreditException	
-			args = [run(r, nv, cs) for r in rest[1:]]
-			if isFn(f): return f(*args)
-			if isinstance(f, Closure):
-				nv2 = Env(dict(zip(f.args, args)), f.nv)
-				return run(f.body, nv2, cs)
-			if isinstance(f, Function):
-				nv2 = Env(dict(zip(f.args, args)+[(f.name, f)]), f.nv)
-				return run(f.body, nv2, cs)
+			return app(f, *[run(r, nv, cs) for r in rest[1:]])
+		if first is LRUN:
+			limit, body, fail = rest
+			newCS = cons(limit-body.type.car-fail.type.car, cs)
+			try: return run(body, nv, newCS)
+			except CreditException, e: 
+				with VL("caught:"): VL(repr(e))
+				return run(fail, nv, cs)
+		if first is FRUN:
+			body, fail = rest
+			newCS = cons(cs.car-body.type.car-fail.type.car, cs)
+			try: 
+				if newCS.car < 0: raise CreditException
+				return run(body, nv, newCS)
+			except CreditException, e: 
+				with VL("caught:"): VL(repr(e))
+				return run(fail, nv, cs)
+
+		if first is DRUN:
+			limit, body, fail = rest
+			limit = min(app(run(limit, nv, cs), cs.car), cs.car)
+			newCS = cons(limit, cs)
+			try: 
+				if newCS.car < 0: raise CreditException
+				return run(body, nv, newCS)
+			except CreditException, e: 
+				with VL("caught:"): VL(repr(e))
+				return run(fail, nv, cs)
+
 		if first is LET:
 			arg, val, body = rest
 			nv2 = Env({arg: run(val, nv, cs)}, nv)
@@ -46,13 +77,6 @@ def run(x, nv, cs=None):
 		if first is FUNC:
 			name, args, body = rest[0], rest[1:-1], rest[-1]
 			return Function(name, args, body, nv, x.type)
-		if first is LRUN:
-			limit, body, fail = rest
-			newCS = cons(limit-body.type.car, cs)
-			try: return run(body, nv, newCS)
-			except CreditException, e: 
-				with VL("caught:"): VL(repr(e))
-				return run(fail, nv, cs)
 		if first is IF:
 			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
 		if first is SEQ:
@@ -73,6 +97,35 @@ def getType(x, nv):
 			else:
 				xNew = Expr([APP]+list(new))
 				xType = pAdd(fType.cdr, sum(r.car for r in types))
+		elif first is LRUN:
+			limit = rest[0]
+			tBody, newBody = getType(rest[1], nv)
+			tFail, newFail = getType(rest[2] or APPNOOP, nv)
+			if tBody.car > limit: xType, xNew = tFail, newFail
+			else:
+				newBody.type = tBody
+				newFail.type = tFail
+				xType = cons(limit, pMax(tBody.cdr, tFail.cdr))
+				xNew = Expr([first, limit, newBody, newFail])
+		elif first is FRUN:
+			tBody, newBody = getType(rest[0], nv)
+			tFail, newFail = getType(rest[1] or APPNOOP, nv)
+			newBody.type = tBody
+			newFail.type = tFail
+			xType = cons(3, pMax(tBody.cdr, tFail.cdr))
+			xNew = Expr([first, newBody, newFail])
+
+		elif first is DRUN:
+			tLimit, newLimit = getType(rest[0], nv)
+			tBody, newBody = getType(rest[1], nv)
+			tFail, newFail = getType(rest[2], nv)
+			# newLimit.type = tLimit
+			# newBody.type = tBody
+			# newFail.type = tFail
+			xType_car = tLimit.car+tLimit.cdr.car+tBody.car+tFail.car+3
+			xType = cons(xType_car, pMax(tBody.cdr, tFail.cdr))
+			xNew = Expr([first, newLimit, newBody, newFail])
+
 		elif first is LET:
 			arg, val, body = rest
 			tVal, newVal = getType(val, nv)
@@ -91,16 +144,7 @@ def getType(x, nv):
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xType = pAdd(pMax(types[1], types[2]), types[0].car)
 			xNew = Expr([first]+list(new))
-		if first is LRUN:
-			limit = rest[0]
-			tBody, newBody = getType(rest[1], nv)
-			tFail, newFail = getType(rest[2], nv)
-			if tBody.car > limit: xType, xNew = tFail, newFail
-			else:
-				newBody.type = tBody
-				xType = cons(limit+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
-				xNew = Expr([first, limit, newBody, newFail])
-		if first is SEQ:
+		elif first is SEQ:
 			types, new = zip(*[getType(r, nv) for r in rest])
 			xNew = Expr([first]+list(new))
 			xType = cons(sum(t.car for t in types), INFPAIR)

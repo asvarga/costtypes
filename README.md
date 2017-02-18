@@ -55,10 +55,13 @@
 * No free lunch!
 * Minimize "arbitrage": 
     - `(Max time to run X)/(Min time to run X)`
+* meta-circular alignment?
 
-### POSSIBLE IMPROVEMENTS ###
+### PROBLEMS / IMPROVEMENTS ###
 * "dependent types": type of function is function of types of args
     - types for variadic functions
+* bounding symbol look-up cost
+* other resources
 * other good ideas
 * allow arbitrary proofs about cost
 
@@ -68,7 +71,7 @@
 
 * dynamic version of `@lrun`
     - use credits that is function of available (ex: half)
-
+* attach type to anything
 
 
 
