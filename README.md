@@ -39,7 +39,7 @@
         + a stack of alloted credits is maintained
         + *`@`lrun* takes limit credits out of its allotment and adds a layer for body to run with
         + if body runs out of credits during run-time an error is raised and caught here, and fail is run
-    - turns *`@`app* into *`@`app*?
+    - turns *`@`app* into *`@`app?*
         + evaluates f
         + checks if it can afford to apply f now that its type is known
         + either applies it or raises error accordingly
