@@ -55,15 +55,22 @@ def run(x, nv, cs=None):
 
 		if first is FRUN:
 			body, fail = rest
-			newCS = cons(cs.car, cs)
-			with VL("@frun"):
-				VL("old cs:", cs)
-				cs.car = 0
-				VL("new cs:", newCS)
-			try: return run(body, nv, newCS)
+			try: return run(body, nv, cs)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
+				cs.car = 0
 				return run(fail, nv, cs)
+			# newCS = cons(cs.car, cs)
+			# with VL("@frun"):
+			# 	VL("old cs:", cs)
+			# 	cs.car = 0
+			# 	VL("new cs:", newCS)
+			# try: return run(body, nv, newCS)
+			# except CreditException, e: 
+			# 	with VL("caught:"): VL(repr(e))
+			# 	return run(fail, nv, cs)
+
+
 
 		if first is DRUN:
 			limit, body, fail = rest
@@ -112,15 +119,12 @@ def getType(x, nv):
 			tFail, newFail = getType(rest[2], nv)
 			if tBody.car > limit: xType, xNew = tFail, newFail
 			else:
-				newBody.type = tBody
 				xType = cons(limit+tFail.car-1, pMax(tBody.cdr, tFail.cdr))
 				xNew = Expr([first, limit, newBody, newFail])
 
 		elif first is FRUN:
 			tBody, newBody = getType(rest[0], nv)
 			tFail, newFail = getType(rest[1], nv)
-			# newBody.type = tBody
-			# newFail.type = tFail
 			xType = cons(tBody.car+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
 			xNew = Expr([first, newBody, newFail])
 
