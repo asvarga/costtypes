@@ -1,25 +1,77 @@
 
 
-##  try 20, 10
+##  simple @lrun (try 20, 10)
 ##  [@lrun 20 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
 
+##  @lrun (try 125, 25, 5)
+##  [@let b (box 1.0)
+##  	[@lrun 125
+##  		([@func step [@seq
+##  			(set b (+ 1 (/ 1 (get b))))
+##  			(print "b =" (get b))
+##  			(step)
+##  		]])
+##  		(get b)
+##  	]
+##  ]
 
-[@let b (box 1.0)
-	[@lrun 125		## try 125, 25, 5 
-		([@func step [@seq
-			(set b (+ 1 (/ 1 (get b))))
-			(print "new:" (get b))
-			(step)
-		]])
-	(get b)]
+##  @lrun in @lrun (try 3 fail cases)
+##  [@lrun 200
+##  	[@let b (box 1.0)
+##  		[@lrun 100
+##  			([@func step [@seq
+##  				(set b (+ 1 (/ 1 (get b))))
+##  				(print "b =" (get b))
+##  				(step)
+##  			]])
+##  			(get b)
+##  			##  ([@lamb f (f (f 3))] sqr)
+##  			##  ([@func step (step)])
+##  		]
+##  	]
+##  	"fail"
+##  ]
+
+##  @frun in @lrun (try 3 fail cases)
+##  [@lrun 200
+##  	[@let b (box 1.0)
+##  		[@frun
+##  			([@func step [@seq
+##  				(set b (+ 1 (/ 1 (get b))))
+##  				(print "b =" (get b))
+##  				(step)
+##  			]])
+##  			(get b)
+##  			##  ([@lamb f (f (f 3))] sqr)
+##  			##  ([@func step (step)])
+##  		]
+##  	]
+##  	"fail"
+##  ]
+
+##  @drun in @lrun (try x/2, x/3, etc)
+[@lrun 300
+	[@let b (box 1.0)
+		[@drun [@lamb x (/ x 2)]
+			([@func step [@seq
+				(set b (+ 1 (/ 1 (get b))))
+				(print "b =" (get b))
+				(step)
+			]])
+			([@func step [@seq
+				(set b (+ 2 (/ 1 (get b))))
+				(print "b =" (get b))
+				(step)
+			]])
+		]
+	]
+	"fail"
 ]
 
-##  [@lrun 125		## try 125, 25, 5 
-##  	([@func step [@seq
-##  		(print "new:" (+ 1 (/ 1 (+ 1 (/ 1 (+ 1 1.0))))))
-##  		(step)
-##  	]])
-##  ]##(get b)]
 
 
+
+
+
+##  (print (* "+" (int (* 200 (- (get b) 0.35)))))
 

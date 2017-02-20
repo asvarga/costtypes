@@ -12,7 +12,7 @@
 
 ### RELATION TO SANDBOXING ###
 * This is only focused on the resource of computation itself
-* Hierarchy of sandboxing scales:
+* Hierarchy of sandboxing scales: foreign program runs in
     - different hardware: multiple computers
     - different process: OS level
     - same process, different thread: sandboxing, MrEd
@@ -29,22 +29,24 @@
 
 ### IMPLEMENTATION ###
 * A type system for cost, in credits
+    - cost type describes *miminum* necessary cost to run (*not max*)
     - a cost type (currently) is
         + `n:int` // costs n to reduce
         + `(n:int, t:type)` // costs n to reduce to function of cost type `t`
-    - assumes that the code passes usual type-checks
-    - improvements mentioned below  
-* Static: A type system for cost, in credits
+        + `. = (infinity, .)`
+    - *assumes that the code passes usual type-checks*
+* Static: Type check and modify
     - `[@lrun limit body fail]` 
         + limits the runtime of the body 
-        + type is approximately `limit`
-        + if `type of body > limit`: replace whole expr with fail
+        + *cost type is just parts that will certainly be run*
+        + if `type of body > limit`: replace whole expr with `fail`
     - `[@app f a b]`
         + if the type of `f` can't be known statically, becomes an `@app?` expr
 * Dynamic: Inserted checks on code that can't be typed statically
     - `[@lrun limit body fail]`
         + a stack of allotted credits is maintained
-        + `@lrun` adds a stack frame with `limit` credits for `body`
+        + `@lrun` takes `limit` credits from the top of the stack, and adds a new top frame with `limit` credits for `body`
+            * ex: `[ 100 | 100 | 100 ]` -> `[ 30 | 70 | 100 | 100 ]`
         + if `body` runs out of credits during run-time, an exception is raised and caught here, and `fail` is run
     - `[@app? f a b]`
         + evaluates `f`
@@ -68,13 +70,10 @@
 
 
 # TODO #
-
-* fix `drun`, what should it even do?
-* attach type to anything
-
+* attach type to anything?
+* variadic drun for many branches?
 
 # NOTES #
-* `drun` could be variadic, and the function could return a vector the size of the number of branches, that sum to <= the allotted credits
 
 
 

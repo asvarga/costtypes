@@ -4,7 +4,7 @@ from Disp import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
-VERBOSE = True
+VERBOSE = False
 def VL(*args): return L(*args) if VERBOSE else L
 
 def runf(file_name):
@@ -41,18 +41,18 @@ def run(x, nv, cs=None):
 					VL("new cs:", cs)
 				if cs.car < 0: raise CreditException	
 			return app(f, *[run(r, nv, cs) for r in rest[1:]])
+
 		if first is LRUN:
 			limit, body, fail = rest
-			newCS = cons(limit, cs)
 			with VL("@lrun"):
 				VL("old cs:", cs)
-				cs.car -= newCS.car
+				newCS = cons(limit, cs)
+				cs.car -= limit
 				VL("new cs:", newCS)
 			try: return run(body, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
 				return run(fail, nv, cs)
-
 		if first is FRUN:
 			body, fail = rest
 			try: return run(body, nv, cs)
@@ -60,28 +60,23 @@ def run(x, nv, cs=None):
 				with VL("caught:"): VL(repr(e))
 				cs.car = 0
 				return run(fail, nv, cs)
-			# newCS = cons(cs.car, cs)
-			# with VL("@frun"):
-			# 	VL("old cs:", cs)
-			# 	cs.car = 0
-			# 	VL("new cs:", newCS)
-			# try: return run(body, nv, newCS)
-			# except CreditException, e: 
-			# 	with VL("caught:"): VL(repr(e))
-			# 	return run(fail, nv, cs)
-
-
-
 		if first is DRUN:
-			limit, body, fail = rest
-			limit = min(app(run(limit, nv, cs), cs.car), cs.car)
-			newCS = cons(limit, cs)
-			try: 
-				if newCS.car < 0: raise CreditException
-				return run(body, nv, newCS)
+			limit, body1, body2 = rest
+			limit = app(run(limit, nv, cs), cs.car)
+			if 0 > limit or limit > cs.car: raise CreditException()
+			with VL("@lrun"):
+				VL("old cs:", cs)
+				newCS = cons(limit, cs)
+				cs.car -= limit
+				VL("new cs:", newCS)
+			try: return run(body1, nv, newCS)
 			except CreditException, e: 
 				with VL("caught:"): VL(repr(e))
-				return run(fail, nv, cs)
+			try: return run(body2, nv, cs)
+			except CreditException, e: 
+				with VL("caught:"): VL(repr(e))
+			return None
+
 
 		if first is LET:
 			arg, val, body = rest
@@ -113,6 +108,7 @@ def getType(x, nv):
 			else:
 				xNew = Expr([APP]+list(new))
 				xType = pAdd(fType.cdr, sum(r.car for r in types))
+
 		elif first is LRUN:
 			limit = rest[0]
 			tBody, newBody = getType(rest[1], nv)
@@ -121,23 +117,18 @@ def getType(x, nv):
 			else:
 				xType = cons(limit+tFail.car-1, pMax(tBody.cdr, tFail.cdr))
 				xNew = Expr([first, limit, newBody, newFail])
-
 		elif first is FRUN:
 			tBody, newBody = getType(rest[0], nv)
 			tFail, newFail = getType(rest[1], nv)
 			xType = cons(tBody.car+tFail.car+3, pMax(tBody.cdr, tFail.cdr))
 			xNew = Expr([first, newBody, newFail])
-
 		elif first is DRUN:
 			tLimit, newLimit = getType(rest[0], nv)
-			tBody, newBody = getType(rest[1], nv)
-			tFail, newFail = getType(rest[2], nv)
-			# newLimit.type = tLimit
-			# newBody.type = tBody
-			# newFail.type = tFail
-			xType_car = tLimit.car+tLimit.cdr.car+tBody.car+tFail.car+3
-			xType = cons(xType_car, pMax(tBody.cdr, tFail.cdr))
-			xNew = Expr([first, newLimit, newBody, newFail])
+			tBody1, newBody1 = getType(rest[1], nv)
+			tBody2, newBody2 = getType(rest[2], nv)
+			xType_car = tLimit.car+tLimit.cdr.car+tBody1.car+tBody2.car+3
+			xType = cons(xType_car, pMax(tBody1.cdr, tBody2.cdr))
+			xNew = Expr([first, newLimit, newBody1, newBody2])
 
 		elif first is LET:
 			arg, val, body = rest

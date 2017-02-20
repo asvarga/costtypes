@@ -120,6 +120,7 @@ BASE[Symbol("get")] = Op(lambda box: box.val, OPTYPE, "get")
 BASE[Symbol("set")] = Op(lambda box, val: box.setVal(val), OPTYPE, "set")
 BASE[Symbol("id")] = Op(lambda x: x, OPTYPE, "id")
 BASE[Symbol("noop")] = NOOP
+BASE[Symbol("int")] = Op(int, OPTYPE, "int")
 
 
 CBASE = {}
@@ -137,7 +138,7 @@ CBASE[Symbol("get")] = OPTYPE
 CBASE[Symbol("set")] = OPTYPE
 CBASE[Symbol("id")] = OPTYPE
 CBASE[Symbol("noop")] = OPTYPE
-
+CBASE[Symbol("int")] = OPTYPE
 
 
 
