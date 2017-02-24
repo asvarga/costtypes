@@ -27,9 +27,9 @@
 ##  				(print "b =" (get b))
 ##  				(step)
 ##  			]])
-##  			##  (get b)
+##  			(get b)
 ##  			##  ([@lamb f (f (f 3))] sqr)
-##  			([@func step (step)])
+##  			##  ([@func step (step)])
 ##  		]
 ##  	]
 ##  	"fail"
@@ -44,8 +44,8 @@
 ##  				(print "b =" (get b))
 ##  				(step)
 ##  			]])
-##  			##  (get b)
-##  			([@lamb f (f (f 3))] sqr)
+##  			(get b)
+##  			##  ([@lamb f (f (f 3))] sqr)
 ##  			##  ([@func step (step)])
 ##  		]
 ##  	]
@@ -70,6 +70,7 @@
 	]
 	"fail"
 ]
+
 
 
 

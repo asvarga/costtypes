@@ -74,19 +74,19 @@
 
 
 # TODO #
-* implement in Rosette?
-* **interpreter shouldn't accept whole credit stack**
-    - can just accept box of allotment
+* implement in Rosette/Racket?
+    - might use *parameters* to track available credits
     - or pass/return immutable allotment (weave in then out)
-    - in racket use *parameters*? (stack of parameters or parameter stack?)
 * avoid using python's exceptions?
-* **upper bounds on cost** would be useful for
+* upper bounds on cost would be useful for
     - proving things about bounds
     - more interesting `@run` forms
-* `@run` variants 
-    - variadic `@drun*` for many branches. fn of allotment and branch types
+* `@run` variants: try to
     - `@run?`: like `@frun` with no `fail` case. just checks and runs
-    - form that runs code for min possible (according to its cost-type)
+    - variadic `@drun*` for many branches
+        + fn of allotment and branch types, returns allotments
+        + each branch might be wrapped in `@run?`
+    - form that runs with min credit (0 more than overhead)
 * fix imbalanced `@if`s by wrapping bigger branch or both in `@run?`s
 * do more of lamb construction while typing? (just attach nv at run-time)
 

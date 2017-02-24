@@ -17,9 +17,71 @@ def runs(x, nv=None, tnv=None):
 		with L("modified:"): L(new)
 	with L("RUNNING..."): result = run(new, nv or Env({}, BASE))
 	with L("RESULT:"): L(result)
-
 def run(x, nv, cs=None):
-	cs = cs or INFPAIR
+	cs = cs or Box(INF)
+
+	def app(f, *args):
+		if isFn(f): return f(*args)
+		if isinstance(f, Closure):
+			nv2 = Env(dict(zip(f.args, args)), f.nv)
+			return run(f.body, nv2, cs)
+		if isinstance(f, Function):
+			nv2 = Env(dict(zip(f.args, args)+[(f.name, f)]), f.nv)
+			return run(f.body, nv2, cs)
+
+	if isinstance(x, Expr):
+		first, rest = x[0], x[1:]
+		if first is APP or first is APPQ:
+			f = run(rest[0], nv, cs)
+			if first is APPQ: 
+				cs.val -= f.type.car
+				if cs.val < 0: raise CreditException	
+			return app(f, *[run(r, nv, cs) for r in rest[1:]])
+
+		if first is LRUN:
+			limit, body, fail = rest
+			cs.val -= limit
+			try: return run(body, nv, Box(limit))
+			except CreditException, e: return run(fail, nv, cs)
+		if first is FRUN:
+			body, fail = rest
+			try: return run(body, nv, cs)
+			except CreditException, e: 
+				cs.val = 0
+				return run(fail, nv, cs)
+		if first is DRUN:
+			limit, body1, body2 = rest
+			# apply limit to cs.val *after* reducing
+			limit = app(run(limit, nv, cs), cs.val)	
+			# make sure limit <= cs.val *after* applying
+			if not 0 <= limit <= cs.val: raise CreditException()
+			cs.val -= limit
+			try: run(body1, nv, Box(limit))
+			except CreditException, e: pass
+			try: run(body2, nv, cs)
+			except CreditException, e: pass
+			return None
+
+		if first is LET:
+			arg, val, body = rest
+			nv2 = Env({arg: run(val, nv, cs)}, nv)
+			return run(body, nv2, cs)
+		if first is LAMB:
+			args, body = rest[:-1], rest[-1]
+			return Closure(args, body, nv, x.type)
+		if first is FUNC:
+			name, args, body = rest[0], rest[1:-1], rest[-1]
+			return Function(name, args, body, nv, x.type)
+		if first is IF:
+			return run(rest[1], nv, cs) if run(rest[0], nv, cs) else run(rest[2], nv, cs)
+		if first is SEQ:
+			for r in rest: run(r, nv, cs)
+			return None
+	if isinstance(x, Symbol): return nv[x]
+	return x
+
+def verbose_run(x, nv, cs=None):
+	cs = cs or Box(INF)
 
 	def app(f, *args):
 		if isFn(f): return f(*args)
@@ -37,44 +99,42 @@ def run(x, nv, cs=None):
 			if first is APPQ: 
 				with VL("@app?", f.type):
 					VL("old cs:", cs)
-					cs = pAdd(cs, -f.type.car)
+					cs.val -= f.type.car
 					VL("new cs:", cs)
-				if cs.car < 0: raise CreditException	
+				if cs.val < 0: raise CreditException	
 			return app(f, *[run(r, nv, cs) for r in rest[1:]])
 
 		if first is LRUN:
 			limit, body, fail = rest
 			with VL("@lrun"):
 				VL("old cs:", cs)
-				newCS = cons(limit, cs)
-				cs.car -= limit
+				newCS = Box(limit)
+				cs.val -= limit
 				VL("new cs:", newCS)
 			try: return run(body, nv, newCS)
 			except CreditException, e: 
-				with VL("caught:"): VL(repr(e))
+				VL("caught:", repr(e))
 				return run(fail, nv, cs)
 		if first is FRUN:
 			body, fail = rest
 			try: return run(body, nv, cs)
 			except CreditException, e: 
-				with VL("caught:"): VL(repr(e))
-				cs.car = 0
+				VL("caught:", repr(e))
+				cs.val = 0
 				return run(fail, nv, cs)
 		if first is DRUN:
 			limit, body1, body2 = rest
-			limit = app(run(limit, nv, cs), cs.car)
-			if 0 > limit or limit > cs.car: raise CreditException()
+			limit = app(run(limit, nv, cs), cs.val)
+			if 0 > limit or limit > cs.val: raise CreditException()
 			with VL("@lrun"):
 				VL("old cs:", cs)
-				newCS = cons(limit, cs)
-				cs.car -= limit
+				newCS = Box(limit)
+				cs.val -= limit
 				VL("new cs:", newCS)
 			try: return run(body1, nv, newCS)
-			except CreditException, e: 
-				with VL("caught:"): VL(repr(e))
+			except CreditException, e: VL("caught:", repr(e))
 			try: return run(body2, nv, cs)
-			except CreditException, e: 
-				with VL("caught:"): VL(repr(e))
+			except CreditException, e: VL("caught:", repr(e))
 			return None
 
 
