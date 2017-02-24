@@ -1,7 +1,10 @@
 
 
 ##  simple @lrun (try 20, 10)
-##  [@lrun 20 ([@lamb f g (f (g (+ 1 2)))] neg sqr) "FAIL!"]
+##  [@lrun 10 
+##  	([@lamb f g (f (g (+ 1 2)))] neg sqr) 
+##  	"FAIL!"
+##  ]
 
 ##  @lrun (try 125, 25, 5)
 ##  [@let b (box 1.0)
@@ -24,9 +27,9 @@
 ##  				(print "b =" (get b))
 ##  				(step)
 ##  			]])
-##  			(get b)
+##  			##  (get b)
 ##  			##  ([@lamb f (f (f 3))] sqr)
-##  			##  ([@func step (step)])
+##  			([@func step (step)])
 ##  		]
 ##  	]
 ##  	"fail"
@@ -41,8 +44,8 @@
 ##  				(print "b =" (get b))
 ##  				(step)
 ##  			]])
-##  			(get b)
-##  			##  ([@lamb f (f (f 3))] sqr)
+##  			##  (get b)
+##  			([@lamb f (f (f 3))] sqr)
 ##  			##  ([@func step (step)])
 ##  		]
 ##  	]

@@ -59,25 +59,32 @@
     - `(Max time to run X)/(Min time to run X)`
 * meta-circular alignment?
 
-### PROBLEMS / IMPROVEMENTS ###
+### PROBLEMS ###
+* symbol lookup cost is unbounded
+* variadic functions are unbounded
+
+### IMPROVEMENTS ###
 * "dependent types": type of function is function of types of args
-    - types for variadic functions
-* bounding symbol look-up cost
-* other resources
-* other good ideas
 * allow arbitrary proofs about cost
+* constrain other resources
+    - stack depth
+    - memory usage
+
 
 
 
 # TODO #
-* attach type to anything?
-* variadic drun for many branches?
+* try to avoid mutating the credit stack
+* implement `@run?`: like `@frun` with no `fail` case
+    - just checks if it has enough credits, and then runs without try/catch
+* fix sufficiently unbalanced `@if`s by wrapping branches in `@run?`s
+* implement in Rosette?
+* variadic `@drun*` for many branches?
 
 # NOTES #
-
-
-
-
+* quotes: functions w/o args
+    - could be inferred while rewriting single input form
+    - could also infer `@func` vs `@lamb` by using `_` as name
 
 
 
