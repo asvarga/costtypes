@@ -74,20 +74,27 @@
 
 
 # TODO #
-* try to avoid mutating the credit stack
-* implement `@run?`: like `@frun` with no `fail` case
-    - just checks if it has enough credits, and then runs without try/catch
-* fix sufficiently unbalanced `@if`s by wrapping branches in `@run?`s
+* **try to avoid mutating credit stack**
+    - `run` might need to accept failure "continuation"
+        + wouldn't use python's error handling
+        + requires tco, or manual expansion to a big loop
+    - rosette/racket might have a better way to do this
+* **implement `@run?`**: like `@frun` with no `fail` case
+    - just checks if it has enough credits, and then runs w/o own try/catch
+    - wraps an expr, not a closure
+* fix imbalanced `@if`s by wrapping bigger branch or both in `@run?`s
 * implement in Rosette?
 * variadic `@drun*` for many branches?
+* form that runs code for min possible (like `@frun`'s `fail` case)
+* do more of lamb construction while typing? (just attach nv at run-time)
 
-# NOTES #
-* quotes: functions w/o args
-    - could be inferred while rewriting single input form
-    - could also infer `@func` vs `@lamb` by using `_` as name
-
-
-
+# NOTES #    
+* consider all combinations of (env, name, args, expr)
+    - interacting with a closure is quite different than with an expr
+        + consider "getting" the body of a function in a closure 
+            * this should return a closure with an extended env that maps the function's args to symbolic values
+            * forbid other operations
+    - also consider qhat a quote is
 
 
 
