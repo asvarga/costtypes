@@ -4,7 +4,7 @@ from Disp import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
-VERBOSE = True
+VERBOSE = False
 def VL(*args): return L(*args) if VERBOSE else L
 
 def runf(file_name):

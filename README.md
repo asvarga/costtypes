@@ -64,8 +64,8 @@
 * variadic functions are unbounded
 
 ### IMPROVEMENTS ###
-* "dependent types": type of function is function of types of args
-* allow arbitrary proofs about cost
+* dependent types: type of function is function of types of args
+* allow arbitrary proofs about costs
 * constrain other resources
     - stack depth
     - memory usage
@@ -74,27 +74,29 @@
 
 
 # TODO #
-* **try to avoid mutating credit stack**
-    - `run` might need to accept failure "continuation"
-        + wouldn't use python's error handling
-        + requires tco, or manual expansion to a big loop
-    - rosette/racket might have a better way to do this
-* **implement `@run?`**: like `@frun` with no `fail` case
-    - just checks if it has enough credits, and then runs w/o own try/catch
-    - wraps an expr, not a closure
-* fix imbalanced `@if`s by wrapping bigger branch or both in `@run?`s
 * implement in Rosette?
-* variadic `@drun*` for many branches?
-* form that runs code for min possible (like `@frun`'s `fail` case)
+* **interpreter shouldn't accept whole credit stack**
+    - can just accept box of allotment
+    - or pass/return immutable allotment (weave in then out)
+    - in racket use *parameters*? (stack of parameters or parameter stack?)
+* avoid using python's exceptions?
+* **upper bounds on cost** would be useful for
+    - proving things about bounds
+    - more interesting `@run` forms
+* `@run` variants 
+    - variadic `@drun*` for many branches. fn of allotment and branch types
+    - `@run?`: like `@frun` with no `fail` case. just checks and runs
+    - form that runs code for min possible (according to its cost-type)
+* fix imbalanced `@if`s by wrapping bigger branch or both in `@run?`s
 * do more of lamb construction while typing? (just attach nv at run-time)
 
-# NOTES #    
+# NOTES #
 * consider all combinations of (env, name, args, expr)
     - interacting with a closure is quite different than with an expr
         + consider "getting" the body of a function in a closure 
             * this should return a closure with an extended env that maps the function's args to symbolic values
             * forbid other operations
-    - also consider qhat a quote is
+    - also consider what a quote is
 
 
 
