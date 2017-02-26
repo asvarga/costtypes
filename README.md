@@ -81,13 +81,14 @@
 * upper bounds on cost would be useful for
     - proving things about bounds
     - more interesting `@run` forms
-* `@run` variants: try to
-    - `@run?`: like `@frun` with no `fail` case. just checks and runs
+* `@run` variants
+    - **`@run?`: like `@frun` with no `fail` case. just checks and runs**
     - variadic `@drun*` for many branches
         + fn of allotment and branch types, returns allotments
         + each branch might be wrapped in `@run?`
     - form that runs with min credit (0 more than overhead)
 * fix imbalanced `@if`s by wrapping bigger branch or both in `@run?`s
+* minimize arbitrage with different base costs
 * do more of lamb construction while typing? (just attach nv at run-time)
 
 # NOTES #
