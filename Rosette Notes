@@ -17,23 +17,32 @@ Rosette Notes
 	- the assertion store is the set of boolean values (i.e., constraints) that have been asserted so far.
 
 
+Questions
+---------
+- How is the term-cache implemented? It seems cool. (trie for s-exprs?)
+	- "Rosette uses the term cache to ensure that no syntactically identical terms are created."
+
+
+
 
 Capstone Ideas
 -----
 
 *** Tim: "Tell me about Synapse and what you envision using it for, then we can discuss."
+
+ROSETTE : type-check desugared code
 - Use both upper and lower bounds on cost
 	- prepare examples of forms and their associated cost-types
 - "path conditions": at any point in code:
 	- pre-condition: can assume that there are sufficient credits available
 	- guarantee: will never run code with insufficient credits
 	- the available credits at each point in code should be a symbolic variable
+* traverse code and make assertions about cost
+	- should code ignore parent code? (information flows up)
+- these programs have read access to available credits parameter (reflection)
+
+SYNAPSE : intelligently/optimally desugar/synthesize the code
 - could just use Synapse's cost computing functionality/structures (and not the synthesis)
-- treat cost-limiting forms like macros with associated guarantees
-	- have many macros (and variants) that get desugared to a small set of forms
-		- limit body expr vs limit this expr
-		- exception vs no-exception
-		- dependent on available cost vs not
 - optimizations that Synapse might handle well
 	- recognizing loops: "loop available/cost times" instead of checking each time
 	- balancing if branchings
@@ -42,7 +51,16 @@ Capstone Ideas
 	- minimum provable cost (for min or max bound)
 
 
-- could even let programs reflect on their available credits (but not set)
+- treat cost-limiting forms like macros with associated guarantees
+	- have many macros (and variants) that get desugared to a small set of forms
+		- limit body expr vs limit this expr
+		- exception vs no-exception
+		- dependent on available cost?
+- unfinished runs:
+	- let program specify whether to run if it can't finish (min < creds < max)
+	- throw/cc: when out of credits, pause to be resumed later
+	- also allow left-over credits to be saved for later (maybe)
+	- process object: continuation + available credits
 - dependent types: depends on available credits
 	- depending on values (like real dependent types) is obviously harder
 - Use less special forms, and smarter type-checking
@@ -56,9 +74,5 @@ Capstone Ideas
 - a trivial cost-limiter always cost-checks for everything
 
 
-Questions
----------
-- How is the term-cache implemented? It seems cool. (trie for s-exprs?)
-	- "Rosette uses the term cache to ensure that no syntactically identical terms are created."
 
 
