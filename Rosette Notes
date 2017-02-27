@@ -21,21 +21,28 @@ Rosette Notes
 Capstone Ideas
 -----
 
-Tim: "Tell me about Synapse and what you envision using it for, then we can discuss."
+*** Tim: "Tell me about Synapse and what you envision using it for, then we can discuss."
 - Use both upper and lower bounds on cost
 	- prepare examples of forms and their associated cost-types
 - "path conditions": at any point in code:
 	- pre-condition: can assume that there are sufficient credits available
 	- guarantee: will never run code with insufficient credits
+	- the available credits at each point in code should be a symbolic variable
 - could just use Synapse's cost computing functionality/structures (and not the synthesis)
 - treat cost-limiting forms like macros with associated guarantees
 	- have many macros (and variants) that get desugared to a small set of forms
 		- limit body expr vs limit this expr
 		- exception vs no-exception
 		- dependent on available cost vs not
+- optimizations that Synapse might handle well
+	- recognizing loops: "loop available/cost times" instead of checking each time
+	- balancing if branchings
+- things to optimize
+	- less dynamic checks (more credits towards given code)
+	- minimum provable cost (for min or max bound)
+
+
 - could even let programs reflect on their available credits (but not set)
-
-
 - dependent types: depends on available credits
 	- depending on values (like real dependent types) is obviously harder
 - Use less special forms, and smarter type-checking
@@ -45,9 +52,8 @@ Tim: "Tell me about Synapse and what you envision using it for, then we can disc
 	- either
 		- just say input and output programs must always be equivalent
 		- place holes in the input program to be filled
-- Just verify my implementation
-	- prove bounds on arbitrage
-
+- could just verify my implementation or prove bounds on arbitrage
+- a trivial cost-limiter always cost-checks for everything
 
 
 Questions
