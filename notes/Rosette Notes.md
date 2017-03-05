@@ -29,6 +29,7 @@ Capstone Ideas
 -----
 
 *** Tim: "Tell me about Synapse and what you envision using it for, then we can discuss."
+*** Shriram: Scheme "engines" and "fuel"
 
 ROSETTE : type-check desugared code
 - Use both upper and lower bounds on cost
