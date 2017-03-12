@@ -18,9 +18,11 @@
 
 ### Plan ###
 
-- figure out safety of eval in monte
-- read scheme fuel stuff
-- figure out fuel stuff
+- skim rest of E docs (especially E-Kernel)
+- look into monte: eval, JIT, etc
+- read about scheme engines
+- return to rosette engines
+- figure out engines+OCap
 
 
 
