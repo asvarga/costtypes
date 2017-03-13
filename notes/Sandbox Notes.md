@@ -14,13 +14,18 @@
 - **Clients** 
     + can also analyze any code on their hardware
     + but no-one should trust their conclusions
-
+- transparent code could be useful for markets, elections, etc
+    + easier than having proofs of object behaviors
+- give all objects a reference to their own code
+    + private by default, but can (honestly) reveal their code
+    + give exactly the information that they alrady have
 
 ### Plan ###
 
-- skim rest of E docs (especially E-Kernel)
++ skim rest of E docs (especially E-Kernel)
++ read about scheme engines
 - look into monte: eval, JIT, etc
-- read about scheme engines
+- look into racket: OCap, eval, JIT, etc
 - return to rosette engines
 - figure out engines+OCap
 
