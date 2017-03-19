@@ -16,9 +16,21 @@
     + but no-one should trust their conclusions
 - transparent code could be useful for markets, elections, etc
     + easier than having proofs of object behaviors
-- give all objects a reference to their own code
-    + private by default, but can (honestly) reveal their code
-    + give exactly the information that they alrady have
+
+- Syntax-Carrying Code
+    + attach AST to the compiled objects appropriately, so it can be recovered after compilation
+        * shouldn't actually give more information than having original AST
+    + allows for both performance and inspectibility
+        * asymptotic speed-up from constant-time look-ups?
+    + access to this syntax is a capability
+    + whenever actor A creates B from syntax, A gets access to B's syntax
+        * this right propagates transitively
+        * treat every separate hardware entity as an actor
+
+- The right to *run*/*continue* is the only ambient authority that OCap doesn't handle
+    + it can be split into *run-time*, *stack-usage*, and *memory-usage*
+    + these both must be limited with methods like cost-type-checking
+
 
 ### Plan ###
 
