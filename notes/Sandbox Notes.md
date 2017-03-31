@@ -17,7 +17,7 @@
 - transparent code could be useful for markets, elections, etc
     + easier than having proofs of object behaviors
 
-- Syntax-Carrying Code
+- Code-Carrying Objects
     + attach AST to the compiled objects appropriately, so it can be recovered after compilation
         * shouldn't actually give more information than having original AST
     + allows for both performance and inspectibility
@@ -26,6 +26,8 @@
     + whenever actor A creates B from syntax, A gets access to B's syntax
         * this right propagates transitively
         * treat every separate hardware entity as an actor
+    + These ASTs should be closures (have env attached)
+        * interacting with a closure object 
 
 - The right to *run*/*continue* is the only ambient authority that OCap doesn't handle
     + it can be split into *run-time*, *stack-usage*, and *memory-usage*
@@ -36,9 +38,11 @@
 
 + skim rest of E docs (especially E-Kernel)
 + read about scheme engines
-- look into monte: eval, JIT, etc
-- look into racket: OCap, eval, JIT, etc
-- return to rosette engines
++ look into monte: eval, JIT, etc
++ try to implement Code-Carrying Objects in E/Monte
+    * They've thought about this ("OpenSource pattern")
+? look into racket: OCap, eval, JIT, etc
+- return to rosette engines, but in python
 - figure out engines+OCap
 
 

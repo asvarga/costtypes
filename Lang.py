@@ -1,6 +1,7 @@
 
 from Parsing import *
 from Disp import *
+from smt import *
 
 ####    ####    ####    ####    ####    ####    ####    ####    
 
@@ -8,7 +9,10 @@ VERBOSE = False
 def VL(*args): return L(*args) if VERBOSE else L
 
 def runf(file_name):
-	with open(file_name, 'r') as f: runs(f.read())
+	#with open(file_name, 'r') as f: runs(f.read())
+	text = ""
+	with open(file_name, 'r') as f: text = f.read()
+	smt(parse(text))
 def runs(x, nv=None, tnv=None): 
 	typ, new, result = None, None, None
 	with L("TYPING..."): typ, new = getType(parse(x), tnv or Env({}, CBASE))
