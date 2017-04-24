@@ -2,9 +2,15 @@
 
 ### SMT Notes ###
 
+- Start with a strongly typed implementation
+    + vars about functions will be function-vars of similar signature
+    + actually type-check the language
+- types can be represeted as recursive datatypes in z3
+
+
 - variables
     + actual (V)alues of (int) lang-variables
-    + (C) ost of reducing each expression (int)
+    + (C)ost of reducing each expression (int)
     + cost and values of (A)pplying result of each expression
         * (function of values of sub-exprs)
 
@@ -14,8 +20,6 @@ C(x), C(A(x)), C(A(A(x))), ...      // any number of these
 v: V(w) | C(w)
 w: expr | A(expr)
 
-!!! Start with a strongly typed implementation !!!
-vars about functions will be function-vars of similar signature
 
 
 

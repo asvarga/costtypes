@@ -74,9 +74,13 @@
 
 
 # TODO #
+* Use Z3!!! It's easier and does the math for you.
+    - keep simple function chain pattern (ignore inputs)
+* desugar to direct fuel manipulation
+    - write verifier separate from desugarer
+
 * implement in Rosette/Racket?
     - might use *parameters* to track available credits
-    - or pass/return immutable allotment (weave in then out)
 * avoid using python's exceptions?
 * upper bounds on cost would be useful for
     - proving things about bounds

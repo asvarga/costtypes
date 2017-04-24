@@ -12,6 +12,7 @@ def runf(file_name):
 	#with open(file_name, 'r') as f: runs(f.read())
 	text = ""
 	with open(file_name, 'r') as f: text = f.read()
+	#runs(text)
 	smt(parse(text))
 def runs(x, nv=None, tnv=None): 
 	typ, new, result = None, None, None

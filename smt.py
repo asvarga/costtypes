@@ -27,7 +27,8 @@ SBASE[Symbol("int")] = OPTYPE
 ########
 
 def smt(x):
-	L(test(x))
+	# L(test(x))
+	L(x)
 
 def test(x, nv=None, cs=None):
 	nv = nv or Env({}, SBASE)
