@@ -1,0 +1,63 @@
+
+~~~ don't ask "how much will this cost?", say "do this with this much fuel" ~~~
+
+- the stamp method is a little too restricting. might want:
+	- minimum fuel needed to not over-use allotment
+	- maximum fuel used if given infinite allotment
+	- function from (allotment, *args) -> usage
+- stamps are a good, easy, start
+	- will be easier to incorporate into languages like Monte
+	- easy to extend to more descriptive dynamic info
+	- less repetition (checks in every function, not in every call)
+- may want to start by dynamically checking for stamp
+	- slow but will demonstrate the point without needing type checking
+
+
+- start without type checking
+- demonstrate that this fancy stuff is necessary?
+
+
+- Any function's <body> can be wrapped in:
+	- if (fuel > __) { <body> } else { fuel -= c0; raise FuelException; }
+	- c0 is a global constant for a given fuel-metric: the cost of failure
+- stamp functions that:
+	- assuming fuel@call >= c0:
+		- fuel@end = fuel@call - fuel_used
+		- if returns successfully:
+			- fuel@return >= c0
+		- if it fails:
+			- fuel@fail >= 0
+	- these functions assume they have at least c0 fuel when called, and guarantee they leave at least c0 fuel when they return successfully, so they can be chained together temporally. (like legos!)
+- have a different stamp for ops/funcs that have a known constant cost
+	- figure out how these different stamps interact statically/dynamically
+- find common language for describing all statements about actual fuel usage and fuel stack editing
+
+
+- it might not be necessary to do (fuel -= c0) when a fuel check fails. this might be an optimization for later. maybe have stamps for both behaviors.
+
+
+
+~~~ w/o a fuel stack ~~~
+
+- M: f:fn? -> (x:box<int?> -> f':fn?)
+- M takes a function f and returns a function f' that:
+	- takes a boxed int x
+	- returns a function f' like the ones described above
+- M needs access to fs source, which it makes a variant of and recompiles to make f'
+	- M is like a dynamic macro, or some language level abstraction
+
+
+
+~~~ Types of behavior with limited fuel ~~~
+
+- Run only if have enough fuel
+- Run block as many full times as possible
+- Run as much as possible, then return continuation
+
+
+
+
+
+
+
+

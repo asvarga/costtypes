@@ -1,0 +1,76 @@
+
+
+##  No overhead with simple predictable functions
+
+##  uses exactly 20 drops (requires @fuel >= 20)
+def f(x):
+	...				##	uses 20 drops
+
+##  uses exactly 40 drops (requires @fuel >= 40)
+def f2():
+	f()
+	f()
+
+########
+
+##  g doesn't really make sense because it is predictable
+##  fuel checks should be at calls, not in definitions
+
+##  requires @fuel >= 5
+def g():	
+	if @fuel >= 30:			##	uses 5 drops
+		@fuel -= 30			##	uses 5 drops
+		...					##	uses 20 drops
+	else:
+		@fuel -= 10			##	uses 5 drops
+
+def h2(h):
+	if @fuel >= h.req*2:	##	uses 10 drops
+		h()					##	uses ??? drops
+		h()					##	uses ??? drops
+	else:
+		@fuel -= 15			##	uses 5 drops
+
+def k2(k):
+	k()						##	uses ??? drops
+	k()						##	uses ??? drops
+
+h2(f)	##	uses 50
+h2(g)	##	uses 70 (wasteful)
+k2(f)	##	requires 40
+k2(g)	##	can run "..." 0, 1, or 2 times
+
+########
+
+##  smart macros should automatically generate fuel checks
+
+def blah(f):
+	@iffuel:
+		f()
+		f()
+
+def blag(f):
+	@iffuel:
+		f()
+	@iffuel:
+		f()
+
+########
+
+- every function annotated with 
+	- required fuel
+		- available at run time
+	- maximum usage
+		- only used for analysis
+		- defaults to @inf
+
+
+
+
+
+
+
+
+
+
+
